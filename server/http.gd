@@ -7,6 +7,7 @@ var clients = []
 
 func _ready():
 	Helpers.find_port(server, 12003)
+	print(Helpers.get_self_ip())
 
 func _process(delta):
 	while server.is_connection_available():
@@ -56,7 +57,7 @@ func handle_http(string: String, peer: StreamPeerTCP):
 		return
 	
 	if main[1] == "/ws":
-		var port = "100"
+		var port = str(Websocket.get_port())
 		peer.put_data("HTTP/1.1 200 OK\r\n".to_utf8_buffer())
 		peer.put_data("Access-Control-Allow-Origin: *\r\n".to_utf8_buffer())
 		peer.put_data(("Content-Length: %s\r\n" % len(port)).to_utf8_buffer())

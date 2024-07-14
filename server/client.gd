@@ -18,6 +18,13 @@ func _init(
 ):
 	self.peer = peer
 
+func send(event: String, data: Dictionary):
+	data.event = event
+	self.peer.send_text(JSON.stringify(data))
+
+func disconnect_peer(code: int, reason: String):
+	self.peer.close(code, reason)
+
 func poll():
 	self.peer.poll()
 	
@@ -32,6 +39,8 @@ func poll():
 				pass
 		self.__peer_state = state
 	
+	print("poll")
+	
 	while self.peer.get_available_packet_count():
 		var packet = self.peer.get_packet()
 		if not self.peer.was_string_packet():
@@ -45,14 +54,10 @@ static func event_handler(event: String, data: Dictionary, object: Object):
 	if object.has_method(event):
 		object.call(event, data)
 	else:
-		print_debug("Event", event, "bubbling upwards")
+		print_debug("Event ", event, " bubbling upwards")
 		object.emit_signal(&"unhandled_event", event, data)
-
-func disconnect_peer(code: int, reason: String):
-	self.peer.close(code, reason)
 
 func __event_register(data: Dictionary):
 	if self.active:
 		return
-	self.active = true
 	self.activate.emit(data)

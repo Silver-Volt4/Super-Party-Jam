@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 HttpServer="*res://server/http.gd"
 Websocket="*res://server/websocket.gd"
+ModuleManager="*res://scripts/modulemanager.gd"
 
 [rendering]
 
