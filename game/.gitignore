@@ -1,0 +1,4 @@
+.godot
+assets/controller
+assets/lib/*
+!assets/lib/SPJLib.gdextension
