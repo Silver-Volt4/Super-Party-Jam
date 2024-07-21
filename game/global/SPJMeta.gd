@@ -1,6 +1,9 @@
-extends Node
+extends Node2D
 
 var __players: Array
+
+func play_sfx(sound: String):
+	get_node(sound).play()
 
 func load_module_class(name: String):
 	return load("res://games/" + name + "/module.gd")
@@ -14,3 +17,12 @@ func switch_module(name: String, players: Array):
 
 func get_players():
 	return __players
+
+func alert(title: String, text: String):
+	var dialog = preload("res://global/dialog/dialog.tscn").instantiate()
+	$CanvasLayer.add_child(
+		dialog
+			.title(title)
+			.text(text)
+			.alert("OK")
+	)

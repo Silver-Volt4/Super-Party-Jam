@@ -11,15 +11,22 @@ config_version=5
 [application]
 
 config/name="Sonic Party Jam"
-run/main_scene="res://scenes/Main.tscn"
+run/main_scene="res://global/lobby/Main.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
 
-HttpServer="*res://server/http.gd"
-Websocket="*res://server/websocket.gd"
-ModuleManager="*res://scripts/modulemanager.gd"
+HttpServer="*res://global/server/http.gd"
+Websocket="*res://global/server/websocket.gd"
+SPJ="*res://global/SPJMeta.tscn"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/mode=3
+window/stretch/mode="canvas_items"
 
 [rendering]
 

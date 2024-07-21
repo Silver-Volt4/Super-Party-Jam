@@ -1,0 +1,60 @@
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://bm57ki0xvrcn0"]
+
+[ext_resource type="FontFile" uid="uid://c0n8gmn3jr248" path="res://assets/controller/font/poppins/poppins-v21-latin-700.woff2" id="1_wbual"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6g0uu"]
+bg_color = Color(0, 0, 0, 0)
+skew = Vector2(0.32, 0)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hd2i6"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.337255, 0, 1, 1)
+skew = Vector2(0.32, 0)
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dqv7m"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(1, 1, 1, 1)
+skew = Vector2(0.32, 0)
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1c4t2"]
+bg_color = Color(0, 0, 0, 1)
+
+[resource]
+default_font = ExtResource("1_wbual")
+default_font_size = 64
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_focus_color = Color(1, 1, 1, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_outline_color = Color(1, 1, 1, 1)
+Button/colors/font_pressed_color = Color(0, 0, 0, 1)
+Button/constants/outline_size = 0
+Button/styles/focus = SubResource("StyleBoxFlat_6g0uu")
+Button/styles/hover = SubResource("StyleBoxFlat_hd2i6")
+Button/styles/normal = SubResource("StyleBoxFlat_hd2i6")
+Button/styles/pressed = SubResource("StyleBoxFlat_dqv7m")
+Panel/styles/panel = SubResource("StyleBoxFlat_1c4t2")

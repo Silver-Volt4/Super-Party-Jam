@@ -1,6 +1,6 @@
 extends Node2D
 
-@onready var players = ModuleManager.get_players()
+@onready var players = SPJ.get_players()
 
 func _ready():
 	var profileScene = preload("./DiceProfile.tscn")

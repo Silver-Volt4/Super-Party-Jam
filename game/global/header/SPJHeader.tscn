@@ -1,0 +1,82 @@
+[gd_scene load_steps=9 format=3 uid="uid://bsn4xv1aetcl5"]
+
+[ext_resource type="Script" path="res://global/header/SPJHeader.gd" id="1_k3h76"]
+[ext_resource type="Shader" path="res://assets/resources/polkadot.gdshader" id="1_oyg3x"]
+[ext_resource type="FontFile" uid="uid://de3f2kbqex88k" path="res://assets/controller/font/anton/anton-v25-latin_latin-ext-regular.woff2" id="2_mwt13"]
+[ext_resource type="Shader" path="res://global/header/flasher.gdshader" id="4_r3me5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6juad"]
+shader = ExtResource("1_oyg3x")
+shader_parameter/size = Vector2(1920, 120)
+shader_parameter/circle_size = 60.0
+shader_parameter/timing = -0.645
+shader_parameter/rotation = 9.59
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qsxjx"]
+content_margin_left = 40.0
+content_margin_right = 40.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_d40hs"]
+line_spacing = 0.0
+font_size = 100
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gjqt5"]
+shader = ExtResource("4_r3me5")
+shader_parameter/progress = 0.0
+shader_parameter/skew = 0.05
+
+[node name="Header" type="Control"]
+custom_minimum_size = Vector2(0, 126)
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_k3h76")
+
+[node name="Header" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="Header" type="ColorRect" parent="Header"]
+material = SubResource("ShaderMaterial_6juad")
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.337255, 0, 1, 1)
+
+[node name="Sep" type="ColorRect" parent="Header"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -12.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_mwt13")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_qsxjx")
+text = "SETTINGS"
+label_settings = SubResource("LabelSettings_d40hs")
+horizontal_alignment = 1
+vertical_alignment = 1
+justification_flags = 160
+uppercase = true
+
+[node name="Flasher" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_gjqt5")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
