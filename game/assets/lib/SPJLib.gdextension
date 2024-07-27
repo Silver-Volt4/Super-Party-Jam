@@ -5,3 +5,4 @@ compatibility_minimum = 4.1
 [libraries]
 
 windows.x86_64 = "res://assets/lib/spj_lib.dll"
+linux.x86_64 = "res://assets/lib/libspj.so"

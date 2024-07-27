@@ -15,9 +15,9 @@ func _ready():
 	var tw = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CIRC)
 	tw.tween_property($FrostedGlass, "self_modulate:a", 1, 0.3)
 	tw.parallel().tween_property($Dimming, "self_modulate:a", 1, 0.3)
-	tw.tween_callback(SPJ.play_sfx.bind("dialog"))
 	tw.tween_property($Dialog, "size:y", 650, 0.3)
 	tw.parallel().tween_property($Dialog, "position:y", (self.size.y - 650)/2, 0.3)
+	tw.parallel().tween_callback(SPJ.play_sfx.bind("dialog"))
 
 func title(title_text: String):
 	$Dialog/Header/Label.text = title_text

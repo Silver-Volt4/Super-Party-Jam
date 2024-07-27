@@ -1,7 +1,19 @@
 extends Button
 class_name SPJButton
 
-const SQUEEZE_PX = 20
+var _t_size
+var _t_global_position
+
+var squish_px = 0 :
+	set(new_squish):
+		var diff = new_squish - squish_px
+		squish_px = new_squish
+		tw = get_tree().create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
+		self._t_size = self.size.x + diff * 2
+		tw.parallel().tween_property(self, "size:x", self._t_size , 0.2)
+		self._t_global_position = self.global_position.x - diff
+		tw.parallel().tween_property(self, "global_position:x", self._t_global_position, 0.2)
+		tw.play()
 
 var tw
 
@@ -15,40 +27,28 @@ func _ready():
 	self.focus_entered.connect(self.stretch)
 	self.focus_exited.connect(self.chill)
 	self.button_down.connect(self.squeeze)
-	self.button_up.connect(self.unsqueeze)
+	self.button_up.connect(self.chill)
 
-func wait_anim_exit():
+func ensure():
+	if name == "Local": print("---")	
+	self.pivot_offset = self.size/2	
 	if tw is Tween and tw.is_running():
-		await tw.finished
+		tw.stop()
+		self.size.x = self._t_size
+		self.global_position.x = self._t_global_position
+		if name == "Local": print("finished")
 
 func stretch():
-	await self.wait_anim_exit()
-	self.pivot_offset = self.size/2
-	tw = get_tree().create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
-	tw.parallel().tween_property(self, "size:x", self.size.x + SQUEEZE_PX * 2, 0.2)
-	tw.parallel().tween_property(self, "global_position:x", self.global_position.x - SQUEEZE_PX, 0.2)
-	tw.play()
+	self.ensure()
+	if name == "Local": print("new squish")
+	squish_px = 20
 
 func chill():
-	await self.wait_anim_exit()
-	self.pivot_offset = self.size/2
-	tw = get_tree().create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
-	tw.parallel().tween_property(self, "size:x", self.size.x - SQUEEZE_PX * 2, 0.2)
-	tw.parallel().tween_property(self, "global_position:x", self.global_position.x + SQUEEZE_PX, 0.2)
-	tw.play()
+	self.ensure()
+	if name == "Local": print("new squish")
+	squish_px = 0
 
 func squeeze():
-	await self.wait_anim_exit()
-	self.pivot_offset = self.size/2
-	tw = get_tree().create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
-	tw.parallel().tween_property(self, "size:x", self.size.x - SQUEEZE_PX * 4, 0.2)
-	tw.parallel().tween_property(self, "global_position:x", self.global_position.x + SQUEEZE_PX * 2, 0.2)
-	tw.play()
-	
-func unsqueeze():
-	await self.wait_anim_exit()
-	self.pivot_offset = self.size/2
-	tw = get_tree().create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
-	tw.parallel().tween_property(self, "size:x", self.size.x + SQUEEZE_PX * 4, 0.2)
-	tw.parallel().tween_property(self, "global_position:x", self.global_position.x - SQUEEZE_PX * 2, 0.2)
-	tw.play()
+	self.ensure()
+	if name == "Local": print("new squish")
+	squish_px = -20
