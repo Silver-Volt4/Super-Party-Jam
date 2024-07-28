@@ -1,0 +1,42 @@
+[gd_scene load_steps=9 format=3 uid="uid://c210xlvdhx1ex"]
+
+[ext_resource type="Shader" path="res://assets/resources/polkadot.gdshader" id="1_u8fjx"]
+[ext_resource type="Theme" uid="uid://bm57ki0xvrcn0" path="res://assets/resources/Theme.tres" id="2_gc7bq"]
+[ext_resource type="Script" path="res://global/lobby/mainmenu.gd" id="3_5ll34"]
+[ext_resource type="PackedScene" uid="uid://bjl6f5chskikp" path="res://global/lobby/lobby.tscn" id="4_fitnx"]
+[ext_resource type="PackedScene" uid="uid://bstghi0lq1ke5" path="res://global/lobby/begin_screen.tscn" id="4_mt5gh"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lathk"]
+shader = ExtResource("1_u8fjx")
+shader_parameter/size = Vector2(1920, 1080)
+shader_parameter/circle_size = 80.0
+shader_parameter/timing = 1.0
+shader_parameter/rotation = null
+
+[sub_resource type="Gradient" id="Gradient_yiupq"]
+colors = PackedColorArray(0.756696, 0.559152, 1, 1, 0.337255, 0, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_6a3df"]
+gradient = SubResource("Gradient_yiupq")
+fill_from = Vector2(0, 1)
+
+[node name="Main" type="TextureRect"]
+material = SubResource("ShaderMaterial_lathk")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_gc7bq")
+texture = SubResource("GradientTexture2D_6a3df")
+script = ExtResource("3_5ll34")
+
+[node name="Lobby" parent="." instance=ExtResource("4_fitnx")]
+visible = false
+layout_mode = 1
+
+[node name="BeginScreen" parent="." instance=ExtResource("4_mt5gh")]
+layout_mode = 1
+
+[connection signal="local" from="BeginScreen" to="." method="_on_begin_screen_local"]
+[connection signal="remote" from="BeginScreen" to="." method="_on_begin_screen_remote"]

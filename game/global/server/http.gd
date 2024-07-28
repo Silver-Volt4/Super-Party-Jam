@@ -1,13 +1,12 @@
 class_name SPJHttpServer
 extends Node
 
-@onready var server = TCPServer.new()
+@onready var server: TCPServer = TCPServer.new()
 
 var clients = []
 
 func _ready():
 	Helpers.find_port(server, 12003)
-	print(Helpers.get_self_ip())
 
 func _process(delta):
 	while server.is_connection_available():

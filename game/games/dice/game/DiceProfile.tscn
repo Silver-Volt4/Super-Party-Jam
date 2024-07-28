@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://tbh1babl84pj"]
 
-[ext_resource type="Script" path="res://games/dice/DiceProfile.gd" id="1_4ph3p"]
+[ext_resource type="Script" path="res://games/dice/game/DiceProfile.gd" id="1_4ph3p"]
 
 [node name="DiceProfile" type="Label"]
 anchors_preset = 15

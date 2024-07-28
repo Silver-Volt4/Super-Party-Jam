@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=6 format=3 uid="uid://bm57ki0xvrcn0"]
 
-[ext_resource type="FontFile" uid="uid://dc5egtp7boy4h" path="res://assets/controller/font/poppins/poppins-v21-latin-700.woff2" id="1_wbual"]
+[ext_resource type="FontFile" uid="uid://c0n8gmn3jr248" path="res://assets/controller/font/poppins/poppins-v21-latin-700.woff2" id="1_wbual"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6g0uu"]
 bg_color = Color(0, 0, 0, 0)

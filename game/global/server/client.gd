@@ -39,8 +39,6 @@ func poll():
 				pass
 		self.__peer_state = state
 	
-	print("poll")
-	
 	while self.peer.get_available_packet_count():
 		var packet = self.peer.get_packet()
 		if not self.peer.was_string_packet():

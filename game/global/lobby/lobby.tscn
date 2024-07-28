@@ -1,0 +1,241 @@
+[gd_scene load_steps=15 format=3 uid="uid://bjl6f5chskikp"]
+
+[ext_resource type="Script" path="res://global/lobby/lobby.gd" id="1_38vlc"]
+[ext_resource type="FontFile" uid="uid://bt6n7nytpmrm0" path="res://assets/controller/font/anton/anton-v25-latin_latin-ext-regular.woff2" id="2_ay0bm"]
+[ext_resource type="FontFile" uid="uid://boil3kn0cc85m" path="res://assets/controller/font/poppins/poppins-v21-latin-700.woff2" id="3_10b10"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jatgm"]
+
+[sub_resource type="Theme" id="Theme_lu1wt"]
+VScrollBar/styles/grabber = SubResource("StyleBoxEmpty_jatgm")
+VScrollBar/styles/grabber_highlight = SubResource("StyleBoxEmpty_jatgm")
+VScrollBar/styles/grabber_pressed = SubResource("StyleBoxEmpty_jatgm")
+VScrollBar/styles/scroll = SubResource("StyleBoxEmpty_jatgm")
+VScrollBar/styles/scroll_focus = SubResource("StyleBoxEmpty_jatgm")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n4pis"]
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.780392, 0.490196, 0.945098, 1)
+corner_radius_top_left = 40
+corner_radius_top_right = 40
+corner_radius_bottom_right = 40
+corner_radius_bottom_left = 40
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e367f"]
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.780392, 0.490196, 0.945098, 0)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[sub_resource type="Gradient" id="Gradient_6ivun"]
+colors = PackedColorArray(0.752941, 0.556863, 1, 1, 0.337255, 0, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_nl1j5"]
+gradient = SubResource("Gradient_6ivun")
+fill_to = Vector2(0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vybph"]
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.780392, 0.490196, 0.945098, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_icisf"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_v3jwd"]
+color = Color(0.780392, 0.490196, 0.945098, 1)
+grow_begin = 2.0
+grow_end = 2.0
+thickness = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_x07xy"]
+font = ExtResource("2_ay0bm")
+font_size = 50
+
+[sub_resource type="LabelSettings" id="LabelSettings_r2ef1"]
+font = ExtResource("3_10b10")
+font_size = 32
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_38vlc")
+
+[node name="Outer" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = -799.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_lu1wt")
+theme_override_styles/panel = SubResource("StyleBoxFlat_n4pis")
+
+[node name="InnerBg" type="Panel" parent="Outer"]
+self_modulate = Color(1, 1, 1, 0.368627)
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_e367f")
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="TextureRect" type="TextureRect" parent="Outer/InnerBg"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_nl1j5")
+
+[node name="Inner" type="Panel" parent="Outer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vybph")
+metadata/_edit_lock_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Outer/Inner"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="Games" type="ScrollContainer" parent="Outer/Inner/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_icisf")
+follow_focus = true
+
+[node name="GamesGrid" type="GridContainer" parent="Outer/Inner/VBoxContainer/Games"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 3
+
+[node name="HSeparator" type="HSeparator" parent="Outer/Inner/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+theme_override_styles/separator = SubResource("StyleBoxLine_v3jwd")
+
+[node name="GameInfo" type="Control" parent="Outer/Inner/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Name" type="Label" parent="Outer/Inner/VBoxContainer/GameInfo"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 6.0
+offset_right = -14.0
+offset_bottom = -117.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Select a game!"
+label_settings = SubResource("LabelSettings_x07xy")
+clip_text = true
+
+[node name="Description" type="Label" parent="Outer/Inner/VBoxContainer/GameInfo"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 88.0
+offset_right = -14.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Hover over the icons above to choose a game."
+label_settings = SubResource("LabelSettings_r2ef1")
+autowrap_mode = 2
+
+[node name="Instruction" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1161.0
+offset_top = 40.0
+offset_right = -40.0
+offset_bottom = -760.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Instruction"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="Instruction/VBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Join the game now"
+label_settings = SubResource("LabelSettings_x07xy")
+autowrap_mode = 2
+
+[node name="Subtitle" type="Label" parent="Instruction/VBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Scan this QR code to open the controller"
+label_settings = SubResource("LabelSettings_r2ef1")
+autowrap_mode = 2
+
+[node name="QRCode" type="TextureRect" parent="Instruction"]
+texture_filter = 1
+custom_minimum_size = Vector2(280, 280)
+layout_mode = 2
+stretch_mode = 5

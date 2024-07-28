@@ -30,25 +30,20 @@ func _ready():
 	self.button_up.connect(self.chill)
 
 func ensure():
-	if name == "Local": print("---")	
-	self.pivot_offset = self.size/2	
+	self.pivot_offset = self.size/2
 	if tw is Tween and tw.is_running():
 		tw.stop()
 		self.size.x = self._t_size
 		self.global_position.x = self._t_global_position
-		if name == "Local": print("finished")
 
 func stretch():
 	self.ensure()
-	if name == "Local": print("new squish")
 	squish_px = 20
 
 func chill():
 	self.ensure()
-	if name == "Local": print("new squish")
 	squish_px = 0
 
 func squeeze():
 	self.ensure()
-	if name == "Local": print("new squish")
 	squish_px = -20

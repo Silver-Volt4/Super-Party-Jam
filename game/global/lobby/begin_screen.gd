@@ -15,7 +15,7 @@ func _input(event):
 		tw.tween_property($ModeSelect, "modulate:a", 1, 0.1)
 
 func _on_local_focus_entered():
-	$ModeSelect/Explanation.text = "For parties where all players reside on the same network"
+	$ModeSelect/Explanation.text = "For parties where everyone is on the same network"
 
 func _on_remote_focus_entered():
 	$ModeSelect/Explanation.text = "For remote parties"

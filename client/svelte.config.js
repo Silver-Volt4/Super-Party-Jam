@@ -8,7 +8,10 @@ const config = {
 		adapter: adapter({
 			pages: "../game/assets/controller",
 		})
-	}
+	},
+	build: {
+        minify: false
+    }
 };
 
 export default config;

@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Sonic Party Jam"
-run/main_scene="res://global/lobby/Main.tscn"
+run/main_scene="res://global/lobby/mainmenu.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
 
