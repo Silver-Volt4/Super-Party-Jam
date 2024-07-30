@@ -20,7 +20,7 @@ func get_players():
 
 func alert(title: String, text: String):
 	var dialog = preload("res://global/dialog/dialog.tscn").instantiate()
-	$CanvasLayer.add_child(
+	$Overlays.add_child(
 		dialog
 			.title(title)
 			.text(text)

@@ -1,6 +1,6 @@
 extends Button
 
-var metadata
+var metadata: SPJModuleMetadata
 var tw: Tween
 
 func anim_hover(anim):

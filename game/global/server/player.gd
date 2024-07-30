@@ -3,6 +3,7 @@ class_name SPJPlayer
 
 signal joined
 signal left
+signal username_changed
 signal unhandled_event(event, data)
 
 var username: String
@@ -42,6 +43,7 @@ func handoff_client():
 
 func __event_setusername(data: Dictionary):
 	self.username = data.username
+	self.username_changed.emit()
 
 func _process(delta):
 	self.client.poll()

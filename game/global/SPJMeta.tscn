@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://2fgtja07d3ya"]
+[gd_scene load_steps=8 format=3 uid="uid://2fgtja07d3ya"]
 
 [ext_resource type="Script" path="res://global/SPJMeta.gd" id="1_3x1xs"]
 [ext_resource type="AudioStream" uid="uid://bim7sfxf5fc31" path="res://assets/sfx/cancel.wav" id="2_0o01e"]
@@ -6,6 +6,7 @@
 [ext_resource type="AudioStream" uid="uid://c1tjwliq2e53o" path="res://assets/sfx/cursor.wav" id="3_h5r3y"]
 [ext_resource type="AudioStream" uid="uid://o6le1gm16hgs" path="res://assets/sfx/select.wav" id="4_bfkj7"]
 [ext_resource type="AudioStream" uid="uid://w6dl1judv7c6" path="res://assets/sfx/start.wav" id="5_lf655"]
+[ext_resource type="AudioStream" uid="uid://r5g1dc5p6prp" path="res://assets/sfx/join.wav" id="7_pg1le"]
 
 [node name="SPJMeta" type="Node2D"]
 script = ExtResource("1_3x1xs")
@@ -28,4 +29,7 @@ stream = ExtResource("4_bfkj7")
 [node name="start" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_lf655")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="join" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_pg1le")
+
+[node name="Overlays" type="CanvasLayer" parent="."]

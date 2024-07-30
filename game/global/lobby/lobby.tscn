@@ -82,6 +82,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_38vlc")
+metadata/_edit_horizontal_guides_ = [1040.0]
 
 [node name="Outer" type="Panel" parent="."]
 layout_mode = 1
@@ -189,6 +190,21 @@ text = "Select a game!"
 label_settings = SubResource("LabelSettings_x07xy")
 clip_text = true
 
+[node name="Players" type="Label" parent="Outer/Inner/VBoxContainer/GameInfo"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 726.0
+offset_top = 8.0
+offset_right = -14.0
+offset_bottom = -117.0
+grow_horizontal = 2
+grow_vertical = 2
+label_settings = SubResource("LabelSettings_r2ef1")
+horizontal_alignment = 2
+clip_text = true
+
 [node name="Description" type="Label" parent="Outer/Inner/VBoxContainer/GameInfo"]
 layout_mode = 1
 anchors_preset = 15
@@ -239,3 +255,16 @@ texture_filter = 1
 custom_minimum_size = Vector2(280, 280)
 layout_mode = 2
 stretch_mode = 5
+
+[node name="Players" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1161.0
+offset_top = 360.0
+offset_right = -40.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30

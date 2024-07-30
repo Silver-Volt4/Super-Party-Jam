@@ -1,0 +1,77 @@
+[gd_scene load_steps=7 format=3 uid="uid://b73svaye6e4st"]
+
+[ext_resource type="FontFile" uid="uid://boil3kn0cc85m" path="res://assets/controller/font/poppins/poppins-v21-latin-700.woff2" id="1_61ko8"]
+[ext_resource type="Script" path="res://global/lobby/lobbyplayer.gd" id="1_kcu30"]
+
+[sub_resource type="Shader" id="Shader_dpnh4"]
+code = "shader_type canvas_item;
+
+uniform float progress: hint_range(0.0, 1.0) = 0.0;
+uniform float skew = 0.0;
+
+void fragment() {
+	vec2 uv = UV;
+	uv.x += uv.y * skew;
+	if(uv.x < (progress + uv.x * skew)) discard;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sbdvx"]
+resource_local_to_scene = true
+shader = SubResource("Shader_dpnh4")
+shader_parameter/progress = 0.115
+shader_parameter/skew = 0.127
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cm14w"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+
+[sub_resource type="LabelSettings" id="LabelSettings_55wmk"]
+font = ExtResource("1_61ko8")
+font_size = 77
+font_color = Color(0, 0, 0, 1)
+
+[node name="Panel" type="Panel"]
+material = SubResource("ShaderMaterial_sbdvx")
+custom_minimum_size = Vector2(719, 100)
+anchors_preset = 10
+anchor_right = 1.0
+offset_right = -1201.0
+offset_bottom = 80.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_cm14w")
+script = ExtResource("1_kcu30")
+
+[node name="Backdrop" type="Panel" parent="."]
+modulate = Color(1, 0.458824, 1, 1)
+show_behind_parent = true
+material = SubResource("ShaderMaterial_sbdvx")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_cm14w")
+metadata/_edit_lock_ = true
+
+[node name="Name" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 107.0
+offset_top = -4.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Aaaaa"
+label_settings = SubResource("LabelSettings_55wmk")
+vertical_alignment = 1
+clip_text = true

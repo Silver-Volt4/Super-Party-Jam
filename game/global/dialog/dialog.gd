@@ -18,6 +18,9 @@ func _ready():
 	tw.tween_property($Dialog, "size:y", 650, 0.3)
 	tw.parallel().tween_property($Dialog, "position:y", (self.size.y - 650)/2, 0.3)
 	tw.parallel().tween_callback(SPJ.play_sfx.bind("dialog"))
+	tw.tween_callback($Dialog/Panel/Dismiss.set_disabled.bind(false))
+	tw.parallel().tween_callback($Dialog/Panel/OK.set_disabled.bind(false))
+	tw.parallel().tween_callback($Dialog/Panel/Cancel.set_disabled.bind(false))
 
 func title(title_text: String):
 	$Dialog/Header/Label.text = title_text

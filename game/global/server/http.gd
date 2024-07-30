@@ -5,7 +5,7 @@ extends Node
 
 var clients = []
 
-func _ready():
+func start():
 	Helpers.find_port(server, 12003)
 
 func _process(delta):
