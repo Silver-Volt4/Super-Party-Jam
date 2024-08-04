@@ -3,6 +3,14 @@ extends Button
 var metadata: SPJModuleMetadata
 var tw: Tween
 
+func _ready():
+	$Thumbnail.texture = metadata.thumbnail
+	self.mouse_entered.connect(self.grab_focus)
+	self.focus_entered.connect(self.focus)
+	self.focus_exited.connect(self.unfocus)
+	self.button_down.connect(self.press)
+	self.button_up.connect(self.unpress)
+
 func anim_hover(anim):
 	$Thumbnail.pivot_offset = size/2
 	$Thumbnail.scale = lerp(Vector2.ONE, Vector2.ONE * 1.15, anim)
@@ -13,13 +21,6 @@ func anim_hover(anim):
 func anim_press(anim):
 	pivot_offset = size/2
 	scale = lerp(Vector2.ONE * 1.05, Vector2.ONE * 0.85, anim)
-
-func _ready():
-	self.mouse_entered.connect(self.grab_focus)
-	self.focus_entered.connect(self.focus)
-	self.focus_exited.connect(self.unfocus)
-	self.button_down.connect(self.press)
-	self.button_up.connect(self.unpress)
 
 func mktween():
 	if tw: tw.stop()

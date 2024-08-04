@@ -24,10 +24,11 @@ func _ready():
 		self.pressed.connect(SPJ.play_sfx.bind("cancel"))
 	else:
 		self.pressed.connect(SPJ.play_sfx.bind("select"))
-	self.focus_entered.connect(self.stretch)
-	self.focus_exited.connect(self.chill)
-	self.button_down.connect(self.squeeze)
-	self.button_up.connect(self.chill)
+	if not self.is_in_group(&"static"):
+		self.focus_entered.connect(self.stretch)
+		self.focus_exited.connect(self.chill)
+		self.button_down.connect(self.squeeze)
+		self.button_up.connect(self.chill)
 
 func ensure():
 	self.pivot_offset = self.size/2

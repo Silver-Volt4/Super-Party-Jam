@@ -38,6 +38,10 @@ func accept(module: String):
 	else:
 		self.handoff_client()
 
+func kick():
+	self.client.disconnect_peer(4010, "Removed from the game")
+	self.queue_free()
+
 func handoff_client():
 	self.client.disconnect_peer(4500, "" if not self.module else self.module.name)
 

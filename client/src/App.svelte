@@ -1,16 +1,15 @@
 <script lang="ts">
-    import { page } from "$app/stores";
-	import client from "$lib/SPJClient.svelte";
-    import { getUrl, setUrl, toLoginScreen, switchModule } from "$lib/UrlUtil";
-    import { onMount } from "svelte";
-	let { children } = $props()
+	import client from "./lib/SPJClient.svelte";
+	import { getUrl, setUrl, toLoginScreen, switchModule } from "./lib/UrlUtil";
+	import { onMount } from "svelte";
+	import Login from "./Login.svelte";
 
 	let disconnected = $derived(client.isInitialized && !client.isOnline);
 
 	let isRejoining = false;
-	
+
 	onMount(async () => {
-		let url = getUrl() 
+		let url = getUrl();
 		let handoff = url.searchParams.get("handoff");
 		if (!handoff) return;
 
@@ -18,20 +17,20 @@
 		try {
 			await client.resumeConnection(handoff, handoff);
 		} catch (e) {
-			let url = getUrl() 
+			let url = getUrl();
 			url.searchParams.delete("handoff");
 			setUrl(url);
 			errorRejoining();
 		}
-	})
+	});
 
 	client.onClientEvent("closed", (event: CustomEvent) => {
 		let e: CloseEvent = event.detail;
 		if (e.code === 4001) {
-			let url = getUrl() 
+			let url = getUrl();
 			url.searchParams.delete("handoff");
 			setUrl(url);
-			if(isRejoining) {
+			if (isRejoining) {
 				errorRejoining();
 			}
 		} else if (e.code === 4500) {
@@ -41,16 +40,16 @@
 
 	function errorRejoining() {
 		alert("Error reconnecting you to the game. Returning to main screen.");
-		toLoginScreen()
+		toLoginScreen();
 	}
 
 	$effect(() => {
-		if(client.userData.token) {
-			let url = getUrl() 
+		if (client.userData.token) {
+			let url = getUrl();
 			url.searchParams.set("handoff", client.userData.token);
 			setUrl(url);
 		}
-	})
+	});
 </script>
 
 {#if client.isInitialized}
@@ -60,7 +59,7 @@
 {/if}
 
 <div class="screen">
-	{@render children()}
+	<Login></Login>
 </div>
 
 {#if disconnected}

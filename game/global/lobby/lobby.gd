@@ -3,12 +3,14 @@ extends Control
 @onready var GAMES = DirAccess.get_directories_at("res://games/")
 
 func _ready():
+	var buttonBase = preload("res://global/lobby/modulebutton.tscn").instantiate()
 	for game in self.GAMES:
-		var button = preload("res://global/lobby/modulebutton.tscn").instantiate()
+		var button = buttonBase.duplicate()
 		button.metadata = load("res://games/" + game + "/meta.gd").new()
+		print(button.metadata)
 		$Outer/Inner/VBoxContainer/Games/GamesGrid.add_child(button)
-		button.focus_entered.connect(self.touch_game.bind(button.metadata))
-		button.pressed.connect(self.play_game.bind(button.metadata))
+		button.focus_entered.connect(self.touch_game.bind(button))
+		button.pressed.connect(self.play_game.bind(button))
 	for player in Websocket.get_players():
 		self.add_player(player, true)
 	Websocket.new_player.connect(self.add_player)
@@ -20,12 +22,14 @@ func setup():
 	var self_addr = "http://" + self_ip + ":" + str(HttpServer.server.get_local_port())
 	$Instruction/QRCode.texture = Helpers.create_qr_code(self_addr)
 
-func touch_game(metadata: SPJModuleMetadata):
+func touch_game(button):
+	var metadata: SPJModuleMetadata = button.metadata
 	$Outer/Inner/VBoxContainer/GameInfo/Name.text = metadata.display_name
 	$Outer/Inner/VBoxContainer/GameInfo/Description.text = metadata.description
 	$Outer/Inner/VBoxContainer/GameInfo/Players.text = metadata.describe_player_count()
 
-func play_game(metadata: SPJModuleMetadata):
+func play_game(button):
+	var metadata: SPJModuleMetadata = button.metadata
 	if metadata.player_count_satisfied(Websocket.get_player_count()):
 		print("satisfied!")
 	else:

@@ -2,6 +2,10 @@ extends Panel
 
 var player: SPJPlayer
 
+func _ready():
+	var popup: PopupMenu = $OptionsButton.get_popup()
+	popup.id_pressed.connect(self.option_selected)
+
 func flash():
 	self.set_username()
 	self.player.username_changed.connect(self.set_username)
@@ -19,3 +23,9 @@ func set_username():
 
 func _lobbyplayer_progress(p: float):
 	self.material.set_shader_parameter(&"progress", p)
+
+func option_selected(id: int):
+	match id:
+		0: 
+			player.kick()
+			self.queue_free()

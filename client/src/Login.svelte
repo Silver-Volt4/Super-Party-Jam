@@ -1,5 +1,5 @@
 <script lang="ts">
-    import client from "$lib/SPJClient.svelte";
+    import client from "./lib/SPJClient.svelte";
 
     let username: string;
 

@@ -1,7 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://b73svaye6e4st"]
+[gd_scene load_steps=18 format=3 uid="uid://b73svaye6e4st"]
 
-[ext_resource type="FontFile" uid="uid://boil3kn0cc85m" path="res://assets/controller/font/poppins/poppins-v21-latin-700.woff2" id="1_61ko8"]
+[ext_resource type="FontFile" uid="uid://bnudjdsnslfdq" path="res://assets/controller/font/poppins/poppins-v21-latin-700.woff2" id="1_61ko8"]
 [ext_resource type="Script" path="res://global/lobby/lobbyplayer.gd" id="1_kcu30"]
+[ext_resource type="Texture2D" uid="uid://dyv52grw5t8xl" path="res://assets/icons/dots-vertical.svg" id="3_c3xbb"]
+[ext_resource type="Script" path="res://assets/nodes/SPJButton.gd" id="3_vg8hq"]
 
 [sub_resource type="Shader" id="Shader_dpnh4"]
 code = "shader_type canvas_item;
@@ -31,6 +33,51 @@ corner_radius_bottom_right = 20
 font = ExtResource("1_61ko8")
 font_size = 77
 font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xos6u"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_03xr2"]
+bg_color = Color(0, 0, 0, 0.156863)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_s2xhx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sf4xx"]
+bg_color = Color(0, 0, 0, 0.313726)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0wwpr"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7bhhs"]
+bg_color = Color(0, 0, 0, 0.156863)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jqqfl"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_o77bj"]
+
+[sub_resource type="Theme" id="Theme_213wk"]
+Button/styles/disabled = SubResource("StyleBoxEmpty_xos6u")
+Button/styles/focus = SubResource("StyleBoxFlat_03xr2")
+Button/styles/hover = SubResource("StyleBoxEmpty_s2xhx")
+Button/styles/normal = SubResource("StyleBoxEmpty_xos6u")
+Button/styles/pressed = SubResource("StyleBoxFlat_sf4xx")
+PopupDialog/styles/panel = SubResource("StyleBoxEmpty_0wwpr")
+PopupMenu/colors/font_color = Color(0, 0, 0, 1)
+PopupMenu/colors/font_hover_color = Color(0, 0, 0, 1)
+PopupMenu/styles/hover = SubResource("StyleBoxFlat_7bhhs")
+PopupMenu/styles/panel = SubResource("StyleBoxFlat_jqqfl")
+PopupPanel/styles/panel = SubResource("StyleBoxEmpty_o77bj")
 
 [node name="Panel" type="Panel"]
 material = SubResource("ShaderMaterial_sbdvx")
@@ -68,6 +115,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 107.0
 offset_top = -4.0
+offset_right = -100.0
 offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -75,3 +123,43 @@ text = "Aaaaa"
 label_settings = SubResource("LabelSettings_55wmk")
 vertical_alignment = 1
 clip_text = true
+
+[node name="OptionsButton" type="MenuButton" parent="." groups=["static"]]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -45.0
+offset_top = -10.0
+offset_bottom = 10.0
+grow_horizontal = 0
+grow_vertical = 2
+focus_mode = 2
+theme = SubResource("Theme_213wk")
+flat = false
+icon_alignment = 1
+item_count = 2
+popup/item_0/text = "Remove"
+popup/item_0/id = 0
+popup/item_1/text = "Make spectator"
+popup/item_1/id = 1
+script = ExtResource("3_vg8hq")
+
+[node name="TextureRect" type="TextureRect" parent="OptionsButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -48.0
+offset_top = -48.0
+offset_right = 48.0
+offset_bottom = 48.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_c3xbb")
+metadata/_edit_lock_ = true
