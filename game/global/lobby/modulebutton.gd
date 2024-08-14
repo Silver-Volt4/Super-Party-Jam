@@ -24,7 +24,7 @@ func anim_press(anim):
 
 func mktween():
 	if tw: tw.stop()
-	self.tw = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
+	self.tw = get_tree().create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
 
 func focus():
 	SPJ.play_sfx("cursor")

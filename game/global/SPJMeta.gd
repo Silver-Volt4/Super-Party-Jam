@@ -13,7 +13,7 @@ func switch_module(name: String, players: Array):
 	for p in players:
 		p.module = module.new()
 	self.__players = players
-	get_tree().change_scene_to_file("res://games/" + name + "/root.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://games/" + name + "/root.tscn")
 
 func get_players():
 	return __players

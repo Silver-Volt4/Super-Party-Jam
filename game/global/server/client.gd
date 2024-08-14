@@ -22,7 +22,7 @@ func send(event: String, data: Dictionary):
 	data.event = event
 	self.peer.send_text(JSON.stringify(data))
 
-func disconnect_peer(code: int, reason: String):
+func close(code: int, reason: String = ""):
 	self.peer.close(code, reason)
 
 func poll():

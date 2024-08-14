@@ -18,7 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 HttpServer="*res://global/server/http.gd"
-Websocket="*res://global/server/websocket.gd"
+GameServer="*res://global/server/game.gd"
 SPJ="*res://global/SPJMeta.tscn"
 
 [display]

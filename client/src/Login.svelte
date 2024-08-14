@@ -1,36 +1,67 @@
 <script lang="ts">
-    import client from "./lib/SPJClient.svelte";
+    import client, { ConnectionState } from "./lib/SPJClient.svelte";
 
     let username: string;
 
     async function connect() {
+        if (!username || client.connectionState !== ConnectionState.OFFLINE) return;
         try {
             await client.newConnection(username);
         } catch {
-            alert("Could not connect.")
+            alert("Could not connect.");
         }
     }
 </script>
 
-{#if !client.isInitialized}
-    <div class="login">
-        <div><b>Username</b></div>
-        <div><input bind:value={username} /></div>
-        <div><button on:click={connect}> Connect </button></div>
-    </div>
-{/if}
-
-{#if client.isInitialized}
-    <div><input bind:value={username} /></div>
-    {#if username != client.userData.username}
-        <button on:click={() => client.setUsername(username)}>
-            Change username
+<div class="login">
+    <img src="logo.png" alt="Sonic Party Jam" />
+    <div class="form">
+        <input bind:value={username} placeholder="Enter username..." />
+        <button on:click={connect}>
+            {#if client.connectionState === ConnectionState.OFFLINE}
+                Join
+            {:else if client.connectionState === ConnectionState.CONNECTING}
+                Connecting...
+            {/if}
         </button>
-    {/if}
-{/if}
+    </div>
+</div>
 
 <style>
     .login {
+        background: linear-gradient(60deg, #c08eff, #5600ff);
         padding: 2em;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        align-items: center;
+    }
+
+    .login img {
+        max-width: 400px;
+        margin: 4em 0;
+    }
+
+    .login .form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 400px;
+        gap: 1em;
+    }
+
+    .login .form * {
+        font-size: 32px;
+        border-radius: 8px;
+        border: none;
+        text-align: center;
+    }
+
+    .login .form input {
+        padding: 8px;
+        background-color: rgba(255, 255, 255, 0.5);
+        
+        color: black;
     }
 </style>

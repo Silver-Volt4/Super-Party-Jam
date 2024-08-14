@@ -11,9 +11,9 @@ func _ready():
 		$Outer/Inner/VBoxContainer/Games/GamesGrid.add_child(button)
 		button.focus_entered.connect(self.touch_game.bind(button))
 		button.pressed.connect(self.play_game.bind(button))
-	for player in Websocket.get_players():
+	for player in GameServer.get_players():
 		self.add_player(player, true)
-	Websocket.new_player.connect(self.add_player)
+	GameServer.new_player.connect(self.add_player)
 
 func setup():
 	var self_ip = Helpers.get_self_ip()
@@ -30,8 +30,8 @@ func touch_game(button):
 
 func play_game(button):
 	var metadata: SPJModuleMetadata = button.metadata
-	if metadata.player_count_satisfied(Websocket.get_player_count()):
-		print("satisfied!")
+	if metadata.player_count_satisfied(GameServer.get_player_count()):
+		SPJ.switch_module(metadata.name, GameServer.get_players())
 	else:
 		SPJ.alert("Insufficient player count", "You do not have enough players to play this game.")
 

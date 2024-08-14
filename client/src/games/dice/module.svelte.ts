@@ -1,4 +1,4 @@
-import { SPJModule } from "$lib/SPJClient.svelte";
+import SPJModule from "../../lib/SPJModule";
 
 export default class DiceModule extends SPJModule {
     name: string = "dice";

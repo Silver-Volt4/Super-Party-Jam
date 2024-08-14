@@ -29,7 +29,7 @@ func _init(
 	self.client = client
 
 func reassign(client: SPJClient):
-	self.client.disconnect_peer(4002, "Replaced by another client")
+	self.client.close(SPJGameServer.ClosePlayer.REPLACED)
 	self.client = client
 
 func accept(module: String):
@@ -39,11 +39,14 @@ func accept(module: String):
 		self.handoff_client()
 
 func kick():
-	self.client.disconnect_peer(4010, "Removed from the game")
+	self.client.close(SPJGameServer.ClosePlayer.REMOVED_BY_HOST)
 	self.queue_free()
 
 func handoff_client():
-	self.client.disconnect_peer(4500, "" if not self.module else self.module.name)
+	if self.module:
+		self.client.close(SPJGameServer.CloseModule.SWITCH_TO_MODULE, self.module.name)
+	else:
+		self.client.close(SPJGameServer.CloseModule.EXIT_MODULE)
 
 func __event_setusername(data: Dictionary):
 	self.username = data.username

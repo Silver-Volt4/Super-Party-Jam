@@ -56,7 +56,7 @@ func handle_http(string: String, peer: StreamPeerTCP):
 		return
 	
 	if main[1] == "/ws":
-		var port = str(Websocket.get_port())
+		var port = str(GameServer.get_port())
 		peer.put_data("HTTP/1.1 200 OK\r\n".to_utf8_buffer())
 		peer.put_data("Access-Control-Allow-Origin: *\r\n".to_utf8_buffer())
 		peer.put_data(("Content-Length: %s\r\n" % len(port)).to_utf8_buffer())

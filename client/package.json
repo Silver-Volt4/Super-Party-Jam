@@ -5,13 +5,17 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "node ./build.js",
+		"build-controller": "vite build",
+		"build-games": "vite build -m build_games",
 		"preview": "vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json && tsc -p tsconfig.node.json"
 	},
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "^3.1.1",
 		"@tsconfig/svelte": "^5.0.4",
+		"@types/glob": "^8.1.0",
+		"glob": "^11.0.0",
 		"svelte": "^5.0.0-next.2",
 		"svelte-check": "^3.8.4",
 		"tslib": "^2.6.3",

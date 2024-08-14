@@ -39,22 +39,23 @@
 }
 
 * {
-  font-family: sans-serif;
+  font-family: Poppins, sans-serif;
+  font-weight: bold;
 }
 
 body {
   margin: 0;
 }
 
-#root,
 body,
-html {
+html,
+#app {
   height: 100%;
   width: 100%;
   overflow: hidden;
 }
 
-#root {
+#app {
   display: flex;
   flex-direction: column;
 }

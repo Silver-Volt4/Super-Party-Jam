@@ -1,3 +1,23 @@
+import type SPJModule from "./SPJModule";
+
+export enum ConnectionState {
+    OFFLINE,
+    CONNECTING,
+    ONLINE
+}
+
+export enum CloseClient {
+    INVALID_TOKEN = 4100,
+}
+export enum ClosePlayer {
+    REPLACED = 4200,
+    REMOVED_BY_HOST = 4201,
+}
+export enum CloseModule {
+    SWITCH_TO_MODULE = 4500,
+    EXIT_MODULE = 4501,
+}
+
 let websocketUrl: URL
 
 async function fetchWebsocketUrl() {
@@ -35,7 +55,7 @@ export class SPJClient {
     private clientEventHandler: EventTarget = new EventTarget();
 
     isInitialized = $state(false);
-    isOnline = $state(false);
+    connectionState: ConnectionState = $state(ConnectionState.OFFLINE);
 
     userData: UserData = $state({
         username: null,
@@ -47,40 +67,48 @@ export class SPJClient {
             username: null,
             token: null,
         }
+        this.ws?.readyState
         this.gameEventHandler = new EventTarget();
         this.isInitialized = false;
-        this.isOnline = false;
     }
 
     private async connect() {
-        this.ws = new WebSocket(await getWebsocketUrl());
-        return await new Promise(async (resolve, reject) => {
-            this.ws?.addEventListener("open", () => {
-                let data: any = {
-                    event: "register",
-                    module: this.module?.name ?? ""
-                };
-                if (this.userData.token) {
-                    data.token = this.userData.token;
-                } else {
-                    data.username = this.userData.username;
-                }
-                this.send(data);
-            }, { once: true })
+        if (this.connectionState === ConnectionState.ONLINE) return;
+        this.connectionState = ConnectionState.CONNECTING;
+        try {
+            this.ws = new WebSocket(await getWebsocketUrl());
+            return await new Promise(async (resolve, reject) => {
+                this.ws?.addEventListener("open", () => {
+                    let data: any = {
+                        event: "register",
+                        module: this.module?.name ?? ""
+                    };
+                    if (this.userData.token) {
+                        data.token = this.userData.token;
+                    } else {
+                        data.username = this.userData.username;
+                    }
+                    this.send(data);
+                }, { once: true })
 
-            this.onGameEvent("accepted", (e: SPJEvent) => {
-                let data = e.detail;
-                this.userData.username = data.username;
-                this.userData.token = data.token;
-                this.isInitialized = true;
-                this.isOnline = true;
-                this.ws?.addEventListener("error", this.onError.bind(this))
-                this.ws?.removeEventListener("error", reject)
-            }, { once: true })
-            this.ws?.addEventListener("error", reject, { once: true })
-            this.ws.addEventListener("close", this.onClose.bind(this))
-            this.ws.addEventListener("message", this.onMessage.bind(this))
-        })
+                this.onGameEvent("accepted", (e: SPJEvent) => {
+                    let data = e.detail;
+                    this.userData.username = data.username;
+                    this.userData.token = data.token;
+                    this.isInitialized = true;
+                    this.connectionState = ConnectionState.ONLINE;
+                    this.ws?.addEventListener("error", this.onError.bind(this))
+                    this.ws?.removeEventListener("error", reject)
+                }, { once: true })
+                this.ws?.addEventListener("error", reject, { once: true })
+                this.ws.addEventListener("close", this.onClose.bind(this))
+                this.ws.addEventListener("message", this.onMessage.bind(this))
+            })
+        }
+        catch (error) {
+            this.connectionState = ConnectionState.OFFLINE;
+            throw error;
+        }
     }
 
     async newConnection(username: string) {
@@ -89,9 +117,11 @@ export class SPJClient {
         await this.connect();
     }
 
-    async resumeConnection(username: string, token: string) {
-        this.reset();
-        this.userData.token = token;
+    async resumeConnection(token: string | null = null) {
+        if (token) {
+            this.reset();
+            this.userData.token = token;
+        }
         await this.connect();
     }
 
@@ -126,6 +156,7 @@ export class SPJClient {
     assignModule(module: SPJModule) {
         this.module = module;
         module.client = this;
+        this.resumeConnection();
     }
 
     getModule() {
@@ -140,10 +171,16 @@ export class SPJClient {
     }
 
     private onClose(e: CloseEvent) {
-        this.isOnline = false;
-        if (e.code >= 4000) {
+        this.connectionState = ConnectionState.OFFLINE;
+        if (e.code == CloseModule.SWITCH_TO_MODULE) {
+            this.clientEventHandler.dispatchEvent(new CustomEvent("switching", { detail: e.reason }))
+        }
+        else if (e.code == CloseModule.EXIT_MODULE) {
+            this.clientEventHandler.dispatchEvent(new CustomEvent("switching", { detail: null }))
+        }
+        else if (e.code >= 4000) {
             this.isInitialized = false;
-            this.clientEventHandler.dispatchEvent(new CustomEvent("closed", { detail: e }))
+            this.clientEventHandler.dispatchEvent(new CustomEvent("disconnected", { detail: e.code }))
         } else {
             this.clientEventHandler.dispatchEvent(new CustomEvent("offline", { detail: e }))
             this.connect();
@@ -151,23 +188,10 @@ export class SPJClient {
     }
 
     private onError(e: Event) {
-        this.isOnline = false;
+        this.connectionState = ConnectionState.OFFLINE;
         this.clientEventHandler.dispatchEvent(new CustomEvent("error", { detail: e }))
     }
 }
-
-export abstract class SPJModule {
-    client: SPJClient | undefined;
-    abstract name: string
-
-    sync(name: string, state: any) {
-        this.client?.send({
-            event: "sync",
-            name: name,
-            value: state
-        })
-    }
-};
 
 let client = new SPJClient();
 export default client;

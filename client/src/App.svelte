@@ -1,21 +1,24 @@
 <script lang="ts">
-	import client from "./lib/SPJClient.svelte";
-	import { getUrl, setUrl, toLoginScreen, switchModule } from "./lib/UrlUtil";
+	import client, { ConnectionState } from "./lib/SPJClient.svelte";
+	import { getUrl, setUrl } from "./lib/UrlUtil";
 	import { onMount } from "svelte";
 	import Login from "./Login.svelte";
+	import loadModule from "./games/loader";
 
-	let disconnected = $derived(client.isInitialized && !client.isOnline);
+	let disconnected = $derived(client.isInitialized && client.connectionState === ConnectionState.OFFLINE);
 
 	let isRejoining = false;
 
+	let moduleAwaiter = $state(null);
+
 	onMount(async () => {
+		if(client.isInitialized) return;
 		let url = getUrl();
 		let handoff = url.searchParams.get("handoff");
 		if (!handoff) return;
-
 		isRejoining = true;
 		try {
-			await client.resumeConnection(handoff, handoff);
+			await client.resumeConnection(handoff);
 		} catch (e) {
 			let url = getUrl();
 			url.searchParams.delete("handoff");
@@ -33,14 +36,20 @@
 			if (isRejoining) {
 				errorRejoining();
 			}
-		} else if (e.code === 4500) {
-			switchModule(e.reason);
 		}
+	});
+
+	client.onClientEvent("switching", (event: CustomEvent) => {
+		switchModule(event.detail);
 	});
 
 	function errorRejoining() {
 		alert("Error reconnecting you to the game. Returning to main screen.");
 		toLoginScreen();
+	}
+
+	async function switchModule(module: string) {
+		moduleAwaiter = loadModule(module);
 	}
 
 	$effect(() => {
@@ -59,11 +68,23 @@
 {/if}
 
 <div class="screen">
-	<Login></Login>
+	{#if !client.isInitialized}
+		<Login></Login>
+	{/if}
+
+	{#await moduleAwaiter}
+		Loading...
+	{:then module}
+		<svelte:component this={module} {client} />
+	{/await}
 </div>
 
 {#if disconnected}
-	<div>You're disconnected</div>
+	<div class="offline">
+		<div>
+			You have been disconnected from the game. Don't close me, I'm trying to reconnect!
+		</div>
+	</div>
 {/if}
 
 <style>
@@ -80,5 +101,19 @@
 
 	.screen {
 		flex-grow: 1;
+	}
+
+	.offline {
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+	}
+
+	.offline div {
+		margin: 0.5em;
+		padding: 0.5em;
+		font-size: 1.5em;
+		background-color: rgba(255, 100, 100);
+		color: white;
 	}
 </style>

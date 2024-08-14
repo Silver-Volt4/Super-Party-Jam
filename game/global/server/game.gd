@@ -1,5 +1,20 @@
-class_name SPJWebsocketServer
+class_name SPJGameServer
 extends Node
+
+# 41xx - Client reasons
+enum CloseClient {
+	INVALID_TOKEN = 4100,
+}
+# 42xx - Player reasons
+enum ClosePlayer {
+	REPLACED = 4200,
+	REMOVED_BY_HOST = 4201,
+}
+# 45xx - Module reasons
+enum CloseModule {
+	SWITCH_TO_MODULE = 4500,
+	EXIT_MODULE = 4501,
+}
 
 signal new_player(player)
 
@@ -41,7 +56,7 @@ func client_activated(data: Dictionary, client: SPJClient):
 			player.reassign(client)
 			player.accept(data.module)
 		else:
-			client.disconnect_peer(4001, "Incorrect token")
+			client.close(SPJGameServer.CloseClient.INVALID_TOKEN)
 
 func client_closed(client: SPJClient):
 	self.clients.erase(client)

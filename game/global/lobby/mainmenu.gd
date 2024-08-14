@@ -7,7 +7,7 @@ func _on_begin_screen_remote():
 	SPJ.alert("Not implemented", "This feature is not available yet.")
 
 func start():
-	Websocket.start()
+	GameServer.start()
 	HttpServer.start()
 	var tw = create_tween()
 	tw.tween_property($BeginScreen, "modulate:a", 0, 0.1)
