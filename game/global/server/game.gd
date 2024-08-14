@@ -1,14 +1,14 @@
 class_name SPJGameServer
 extends Node
 
-# 41xx - Client reasons
+# 41xx - Client reasons. These always invalidate the token
 enum CloseClient {
 	INVALID_TOKEN = 4100,
+	REMOVED_BY_HOST = 4101,
 }
 # 42xx - Player reasons
 enum ClosePlayer {
 	REPLACED = 4200,
-	REMOVED_BY_HOST = 4201,
 }
 # 45xx - Module reasons
 enum CloseModule {

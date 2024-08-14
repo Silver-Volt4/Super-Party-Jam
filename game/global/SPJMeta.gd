@@ -2,6 +2,13 @@ extends Node2D
 
 var __players: Array
 
+func _unhandled_input(event):
+	if event.is_action_pressed("fullscreen"):
+		if get_window().mode == Window.MODE_EXCLUSIVE_FULLSCREEN:
+			get_window().mode = Window.MODE_WINDOWED
+		else:
+			get_window().mode = Window.MODE_EXCLUSIVE_FULLSCREEN
+
 func play_sfx(sound: String):
 	get_node(sound).play()
 

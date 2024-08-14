@@ -1,4 +1,6 @@
-let loadModule;
+import type { SvelteComponent } from "svelte";
+
+let loadModule: (moduleName: string) => Promise<SvelteComponent>;
 
 // I don't like this one bit but I've spent too much time here to make it pretty
 if (import.meta.env.MODE == "build_games" || import.meta.env.DEV) {

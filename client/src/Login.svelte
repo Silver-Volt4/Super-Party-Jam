@@ -1,7 +1,20 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import client, { ConnectionState } from "./lib/SPJClient.svelte";
 
     let username: string;
+
+    onMount(async () => {
+		if(client.isInitialized) return;
+        let lastToken = localStorage.getItem("spjLastGame");
+		if (!lastToken) return;
+		try {
+			await client.resumeConnection(lastToken);
+		} catch (e) {
+            localStorage.removeItem("spjLastGame");
+            alert("Could not connect.");
+		}
+	});
 
     async function connect() {
         if (!username || client.connectionState !== ConnectionState.OFFLINE) return;

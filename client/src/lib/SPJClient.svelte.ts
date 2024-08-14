@@ -8,14 +8,24 @@ export enum ConnectionState {
 
 export enum CloseClient {
     INVALID_TOKEN = 4100,
+    REMOVED_BY_HOST = 4101,
 }
 export enum ClosePlayer {
     REPLACED = 4200,
-    REMOVED_BY_HOST = 4201,
 }
 export enum CloseModule {
     SWITCH_TO_MODULE = 4500,
     EXIT_MODULE = 4501,
+}
+
+export enum SpectatorMode {
+    IN_GAME,
+    SPECTATOR,
+    SPECTATOR_FORCED
+}
+
+interface EventListener {
+    (evt: CustomEvent): void;
 }
 
 let websocketUrl: URL
@@ -62,13 +72,17 @@ export class SPJClient {
         token: null,
     });
 
+    spectatorMode: SpectatorMode = $state(SpectatorMode.IN_GAME);
+
     private reset() {
         this.userData = {
             username: null,
             token: null,
         }
-        this.ws?.readyState
+        this.connectionState = ConnectionState.OFFLINE;
+        this.spectatorMode = SpectatorMode.IN_GAME;
         this.gameEventHandler = new EventTarget();
+        this.onGameEvent("spectator", (e: CustomEvent) => this.setSpectatorMode(e.detail))
         this.isInitialized = false;
     }
 
@@ -101,8 +115,8 @@ export class SPJClient {
                     this.ws?.removeEventListener("error", reject)
                 }, { once: true })
                 this.ws?.addEventListener("error", reject, { once: true })
-                this.ws.addEventListener("close", this.onClose.bind(this))
-                this.ws.addEventListener("message", this.onMessage.bind(this))
+                this.ws?.addEventListener("close", this.onClose.bind(this))
+                this.ws?.addEventListener("message", this.onMessage.bind(this))
             })
         }
         catch (error) {
@@ -125,19 +139,19 @@ export class SPJClient {
         await this.connect();
     }
 
-    onGameEvent(type: string, callback: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions | undefined) {
+    onGameEvent(type: string, callback: EventListener | null, options?: boolean | AddEventListenerOptions | undefined) {
         this.gameEventHandler.addEventListener(type, callback, options);
     }
 
-    offGameEvent(type: string, callback: EventListenerOrEventListenerObject | null, options?: boolean | EventListenerOptions | undefined) {
+    offGameEvent(type: string, callback: EventListener | null, options?: boolean | EventListenerOptions | undefined) {
         this.gameEventHandler.removeEventListener(type, callback, options);
     }
 
-    onClientEvent(type: string, callback: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions | undefined) {
+    onClientEvent(type: string, callback: EventListener | null, options?: boolean | AddEventListenerOptions | undefined) {
         this.clientEventHandler.addEventListener(type, callback, options);
     }
 
-    offClientEvent(type: string, callback: EventListenerOrEventListenerObject | null, options?: boolean | EventListenerOptions | undefined) {
+    offClientEvent(type: string, callback: EventListener | null, options?: boolean | EventListenerOptions | undefined) {
         this.clientEventHandler.removeEventListener(type, callback, options);
     }
 
@@ -180,6 +194,10 @@ export class SPJClient {
         }
         else if (e.code >= 4000) {
             this.isInitialized = false;
+            if (e.code >= 4100) {
+                this.userData.username = null;
+                this.userData.token = null;
+            }
             this.clientEventHandler.dispatchEvent(new CustomEvent("disconnected", { detail: e.code }))
         } else {
             this.clientEventHandler.dispatchEvent(new CustomEvent("offline", { detail: e }))
@@ -190,6 +208,24 @@ export class SPJClient {
     private onError(e: Event) {
         this.connectionState = ConnectionState.OFFLINE;
         this.clientEventHandler.dispatchEvent(new CustomEvent("error", { detail: e }))
+    }
+
+    toggleSpectatorMode() {
+        console.log("a")
+        this.send({
+            "event": "setspectator",
+            "spectator": this.spectatorMode === SpectatorMode.IN_GAME 
+        })
+    }
+
+    private setSpectatorMode(detail: {spectator: boolean, force_spectator: boolean}) {
+        if(detail.force_spectator) {
+            this.spectatorMode = SpectatorMode.SPECTATOR_FORCED;
+        } else if (detail.spectator) {
+            this.spectatorMode = SpectatorMode.SPECTATOR;
+        } else {
+            this.spectatorMode = SpectatorMode.IN_GAME;
+        }
     }
 }
 

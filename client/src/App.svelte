@@ -1,41 +1,29 @@
 <script lang="ts">
-	import client, { ConnectionState } from "./lib/SPJClient.svelte";
-	import { getUrl, setUrl } from "./lib/UrlUtil";
-	import { onMount } from "svelte";
+	import client, {
+		CloseClient,
+		ConnectionState,
+        SpectatorMode,
+	} from "./lib/SPJClient.svelte";
 	import Login from "./Login.svelte";
 	import loadModule from "./games/loader";
+	import type { SvelteComponent } from "svelte";
 
-	let disconnected = $derived(client.isInitialized && client.connectionState === ConnectionState.OFFLINE);
+	let disconnected = $derived(
+		client.isInitialized &&
+			client.connectionState === ConnectionState.OFFLINE,
+	);
 
-	let isRejoining = false;
+	let moduleAwaiter: Promise<SvelteComponent> | null = $state(null);
 
-	let moduleAwaiter = $state(null);
-
-	onMount(async () => {
-		if(client.isInitialized) return;
-		let url = getUrl();
-		let handoff = url.searchParams.get("handoff");
-		if (!handoff) return;
-		isRejoining = true;
-		try {
-			await client.resumeConnection(handoff);
-		} catch (e) {
-			let url = getUrl();
-			url.searchParams.delete("handoff");
-			setUrl(url);
-			errorRejoining();
+	client.onClientEvent("disconnected", (event: CustomEvent) => {
+		let code: number = event.detail;
+		if (code >= 4100) {
+			localStorage.removeItem("spjLastGame");
 		}
-	});
-
-	client.onClientEvent("closed", (event: CustomEvent) => {
-		let e: CloseEvent = event.detail;
-		if (e.code === 4001) {
-			let url = getUrl();
-			url.searchParams.delete("handoff");
-			setUrl(url);
-			if (isRejoining) {
-				errorRejoining();
-			}
+		if (code === CloseClient.INVALID_TOKEN) {
+			alert(
+				"Your connection to the game has been lost. You will now return to the main screen.",
+			);
 		}
 	});
 
@@ -43,33 +31,46 @@
 		switchModule(event.detail);
 	});
 
-	function errorRejoining() {
-		alert("Error reconnecting you to the game. Returning to main screen.");
-		toLoginScreen();
-	}
+	$effect(() => {
+		if (client.userData.token) {
+			localStorage.setItem("spjLastGame", client.userData.token);
+		}
+	});
 
 	async function switchModule(module: string) {
 		moduleAwaiter = loadModule(module);
 	}
 
-	$effect(() => {
-		if (client.userData.token) {
-			let url = getUrl();
-			url.searchParams.set("handoff", client.userData.token);
-			setUrl(url);
+	function rename() {
+		let newName = prompt("Enter your new name:", client.userData.username ?? "");
+		if(newName) {
+			client.setUsername(newName);
 		}
-	});
+	}
 </script>
 
 {#if client.isInitialized}
 	<header>
-		<div class="header">{client.userData.username}</div>
+		<div class="header" on:click={rename}>{client.userData.username}</div>
 	</header>
 {/if}
 
 <div class="screen">
 	{#if !client.isInitialized}
 		<Login></Login>
+	{/if}
+
+	{#if moduleAwaiter === null}
+		{#if client.spectatorMode !== SpectatorMode.SPECTATOR_FORCED}
+			{#if client.spectatorMode === SpectatorMode.IN_GAME}
+				You are in the game.
+			{:else}
+				You have chosen to spectate.
+			{/if}
+			<button on:click={() => client.toggleSpectatorMode()}>Toggle</button>
+		{:else}
+			You have been forced into spectator mode. You cannot change this.
+		{/if}
 	{/if}
 
 	{#await moduleAwaiter}
@@ -82,21 +83,23 @@
 {#if disconnected}
 	<div class="offline">
 		<div>
-			You have been disconnected from the game. Don't close me, I'm trying to reconnect!
+			You have been disconnected from the game. Don't close me, I'm trying
+			to reconnect!
 		</div>
 	</div>
 {/if}
 
 <style>
 	header {
-		background-color: silver;
+        background: linear-gradient(to right, #c08eff, #5600ff);
 		padding: 0.5em;
 	}
-
+	
 	header div.header {
 		font-size: 3em;
 		text-align: center;
 		font-family: Anton;
+		color: white;
 	}
 
 	.screen {
