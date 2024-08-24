@@ -7,7 +7,6 @@ func _ready():
 	for game in self.GAMES:
 		var button = buttonBase.duplicate()
 		button.metadata = load("res://games/" + game + "/meta.gd").new()
-		print(button.metadata)
 		$Outer/Inner/VBoxContainer/Games/GamesGrid.add_child(button)
 		button.focus_entered.connect(self.touch_game.bind(button))
 		button.pressed.connect(self.play_game.bind(button))
@@ -31,9 +30,19 @@ func touch_game(button):
 func play_game(button):
 	var metadata: SPJModuleMetadata = button.metadata
 	if metadata.player_count_satisfied(GameServer.get_player_count()):
-		SPJ.switch_module(metadata.name, GameServer.get_players())
+		self.launch_game(button)
 	else:
-		SPJ.alert("Insufficient player count", "You do not have enough players to play this game.")
+		SPJ.alert("Insufficient player count",
+			 "You do not have enough players to play this game."
+			)
+
+func launch_game(button):
+	SPJ.play_sfx("select")
+	var players = []
+	for p in GameServer.get_players():
+		if not (p as SPJPlayer).is_spectator():
+			players.append(p)
+	SPJ.switch_module("dice", players)
 
 func add_player(player: SPJPlayer, initial: bool = false):
 	var p = preload("res://global/lobby/lobbyplayer.tscn").instantiate()

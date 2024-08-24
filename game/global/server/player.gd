@@ -4,6 +4,7 @@ class_name SPJPlayer
 signal joined
 signal left
 signal username_changed
+signal spectator_changed
 signal unhandled_event(event, data)
 
 var username: String
@@ -21,16 +22,15 @@ var module: SPJModule = null :
 			module.player = self
 		handoff_client()
 var connected: bool = false
+
 var force_spectator: bool = false :
 	set(new_force_spectator):
 		force_spectator = new_force_spectator
 		sync_spectator_mode()
-
 var spectator: bool = false : 
 	set(new_spectator):
 		spectator = new_spectator
 		sync_spectator_mode()
-
 
 func _init(
 	client: SPJClient
@@ -69,13 +69,15 @@ func sync_spectator_mode():
 			"force_spectator": self.force_spectator
 		}
 	)
+	self.spectator_changed.emit()
 
 func __event_setusername(data: Dictionary):
 	self.username = data.username
 	self.username_changed.emit()
 	
 func __event_setspectator(data: Dictionary):
-	self.spectator = data.spectator or self.force_spectator
+	if not self.force_spectator:
+		self.spectator = data.spectator
 
 func _process(delta):
 	self.client.poll()

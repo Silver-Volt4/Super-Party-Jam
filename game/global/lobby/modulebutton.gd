@@ -4,7 +4,7 @@ var metadata: SPJModuleMetadata
 var tw: Tween
 
 func _ready():
-	$Thumbnail.texture = metadata.thumbnail
+	$Thumbnail.texture = self.metadata.thumbnail
 	self.mouse_entered.connect(self.grab_focus)
 	self.focus_entered.connect(self.focus)
 	self.focus_exited.connect(self.unfocus)
@@ -12,18 +12,18 @@ func _ready():
 	self.button_up.connect(self.unpress)
 
 func anim_hover(anim):
-	$Thumbnail.pivot_offset = size/2
+	$Thumbnail.pivot_offset = self.size/2
 	$Thumbnail.scale = lerp(Vector2.ONE, Vector2.ONE * 1.15, anim)
 	$Thumbnail.rotation_degrees = lerp(0.0, -4.0, anim)
-	pivot_offset = size/2
-	scale = lerp(Vector2.ONE, Vector2.ONE * 1.05, anim)
+	self.pivot_offset = self.size/2
+	self.scale = lerp(Vector2.ONE, Vector2.ONE * 1.05, anim)
 
 func anim_press(anim):
-	pivot_offset = size/2
-	scale = lerp(Vector2.ONE * 1.05, Vector2.ONE * 0.85, anim)
+	self.pivot_offset = self.size/2
+	self.scale = lerp(Vector2.ONE * 1.05, Vector2.ONE * 0.85, anim)
 
 func mktween():
-	if tw: tw.stop()
+	if self.tw: self.tw.stop()
 	self.tw = get_tree().create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CIRC)
 
 func focus():

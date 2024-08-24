@@ -52,7 +52,6 @@ static func event_handler(event: String, data: Dictionary, object: Object):
 	if object.has_method(event):
 		object.call(event, data)
 	else:
-		print_debug("Event ", event, " bubbling upwards")
 		object.emit_signal(&"unhandled_event", event, data)
 
 func __event_register(data: Dictionary):

@@ -6,10 +6,11 @@ func _ready():
 	var popup: PopupMenu = $OptionsButton.get_popup()
 	popup.id_pressed.connect(self.option_selected)
 	self.update_buttons()
+	self.player.username_changed.connect(self.redraw)
+	self.player.spectator_changed.connect(self.redraw)
 
 func flash():
-	self.set_username()
-	self.player.username_changed.connect(self.set_username)
+	self.redraw()
 	var tw = create_tween().set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
 	tw.tween_method(self._lobbyplayer_progress, 1.0, 0.115, 0.3)
 	tw.parallel().tween_property($Name, "position", $Name.position, 0.5)
@@ -24,8 +25,10 @@ func update_buttons():
 		"Unenforce spectator" if self.player.force_spectator else "Force spectator"
 	)
 
-func set_username():
+func redraw():
 	$Name.text = self.player.username 
+	self.self_modulate.a = 0.5 if self.player.is_spectator() else 1.0
+	$Backdrop.self_modulate.a = 0.5 if self.player.is_spectator() else 1.0
 
 func _lobbyplayer_progress(p: float):
 	self.material.set_shader_parameter(&"progress", p)

@@ -2,7 +2,7 @@
 	import client, {
 		CloseClient,
 		ConnectionState,
-        SpectatorMode,
+		SpectatorMode,
 	} from "./lib/SPJClient.svelte";
 	import Login from "./Login.svelte";
 	import loadModule from "./games/loader";
@@ -42,8 +42,11 @@
 	}
 
 	function rename() {
-		let newName = prompt("Enter your new name:", client.userData.username ?? "");
-		if(newName) {
+		let newName = prompt(
+			"Enter your new name:",
+			client.userData.username ?? "",
+		);
+		if (newName) {
 			client.setUsername(newName);
 		}
 	}
@@ -58,26 +61,25 @@
 <div class="screen">
 	{#if !client.isInitialized}
 		<Login></Login>
-	{/if}
-
-	{#if moduleAwaiter === null}
+	{:else if moduleAwaiter === null}
 		{#if client.spectatorMode !== SpectatorMode.SPECTATOR_FORCED}
 			{#if client.spectatorMode === SpectatorMode.IN_GAME}
 				You are in the game.
 			{:else}
 				You have chosen to spectate.
 			{/if}
-			<button on:click={() => client.toggleSpectatorMode()}>Toggle</button>
+			<button on:click={() => client.toggleSpectatorMode()}>Toggle</button
+			>
 		{:else}
 			You have been forced into spectator mode. You cannot change this.
 		{/if}
+	{:else}
+		{#await moduleAwaiter}
+			Loading...
+		{:then module}
+			<svelte:component this={module} {client} />
+		{/await}
 	{/if}
-
-	{#await moduleAwaiter}
-		Loading...
-	{:then module}
-		<svelte:component this={module} {client} />
-	{/await}
 </div>
 
 {#if disconnected}
@@ -91,10 +93,10 @@
 
 <style>
 	header {
-        background: linear-gradient(to right, #c08eff, #5600ff);
+		background: linear-gradient(to right, #c08eff, #5600ff);
 		padding: 0.5em;
 	}
-	
+
 	header div.header {
 		font-size: 3em;
 		text-align: center;
