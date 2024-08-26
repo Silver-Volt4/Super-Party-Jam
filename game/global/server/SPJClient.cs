@@ -51,12 +51,18 @@ public static class SPJEventHookExt
 
     public static void HandleOnChange(this SPJEventHook hook, string name, dynamic new_value)
     {
-        var d = new Dictionary<string, Godot.Variant>
+        Dictionary data = new Dictionary
         {
-            { "phase", Variant.From<int>((int)hook.GetPhase()) },
-            { "value", Variant.CreateFrom(new_value) }
+            { "value", new_value }
         };
-        hook.GetClient().Send("sync", d);
+        hook.GetClient().SendPacket(new SPJPacket
+        {
+            Type = SPJPacket.PacketType.Sync,
+            Phase = hook.GetPhase(),
+            Name = name,
+            Data = data
+        });
+
     }
 }
 
@@ -152,17 +158,21 @@ public partial class SPJClient : Resource, SPJEventHook
     )
     {
         this.peer = peer;
-        GD.Print(this.active.GetType());
         this.SetupEventHook();
-        this.active.Set(true);
     }
 
-
-    public void Send(string event_name, Godot.Collections.Dictionary<string, Variant> data)
+    public void SendPacket(SPJPacket packet)
     {
-        data.Add("event", event_name);
-        var d = Json.Stringify(data);
-        peer.SendText(d);
+        Dictionary data = packet.Data;
+        data.Add("type", (int)packet.Type);
+        data.Add("phase", (int)packet.Phase);
+        data.Add("name", packet.Name);
+        peer.SendText(Json.Stringify(data));
+    }
+
+    public void Send(string data)
+    {
+        peer.SendText(data);
     }
 
     public void Close(int code, string reason = "")
