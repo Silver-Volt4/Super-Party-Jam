@@ -40,11 +40,11 @@ func launch_game(button):
 	SPJ.play_sfx("select")
 	var players = []
 	for p in GameServer.get_players():
-		if not (p as SPJPlayer).is_spectator():
+		if not (p).is_spectator():
 			players.append(p)
 	SPJ.switch_module("dice", players)
 
-func add_player(player: SPJPlayer, initial: bool = false):
+func add_player(player, initial: bool = false):
 	var p = preload("res://global/lobby/lobbyplayer.tscn").instantiate()
 	p.player = player
 	$Players.add_child(p)

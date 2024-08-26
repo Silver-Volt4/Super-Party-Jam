@@ -15,7 +15,7 @@ static func find_port(server: TCPServer, port: int):
 
 static func create_event_handler(this: Object, child: Object):
 	Signal(this, &"unhandled_event")
-	child.unhandled_event.connect(SPJClient.event_handler.bind(this))
+	#child.unhandled_event.connect(SPJClient.event_handler.bind(this))
 
 static func get_self_ip() -> String:
 	if self_ip_address == null:

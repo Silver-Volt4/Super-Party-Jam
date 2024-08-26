@@ -1,6 +1,6 @@
 extends Panel
 
-var player: SPJPlayer
+var player
 
 func _ready():
 	var popup: PopupMenu = $OptionsButton.get_popup()

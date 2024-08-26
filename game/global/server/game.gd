@@ -20,7 +20,11 @@ signal new_player(player)
 
 @onready var server = TCPServer.new()
 
-var clients: Array[SPJClient] = []
+var clients: Array = []
+
+func _ready() -> void:
+	var peer = WebSocketPeer.new()
+	var client = load("res://global/server/SPJClient.cs").new(peer)
 
 func start():
 	Helpers.find_port(server, 12004)
@@ -33,24 +37,25 @@ func _process(delta):
 		var peer = WebSocketPeer.new()
 		peer.inbound_buffer_size = 134215680
 		peer.accept_stream(server.take_connection())
-		var client = SPJClient.new(peer)
+		var client = load("res://global/server/SPJClient.cs").new(peer)
+		print("Take client ", client)
 		self.clients.append(client)
-		client.closed.connect(self.client_closed.bind(client), CONNECT_ONE_SHOT)
-		client.activate.connect(self.client_activated.bind(client), CONNECT_ONE_SHOT)
+		#client.closed.connect(self.client_closed.bind(client), CONNECT_ONE_SHOT)
+		#client.activate.connect(self.client_activated.bind(client), CONNECT_ONE_SHOT)
 
 	for client in self.clients:
 		client.poll()
 
-func client_activated(data: Dictionary, client: SPJClient):
+func client_activated(data: Dictionary, client):
 	if !data.has(&"token"):
-		var player = SPJPlayer.new(client)
+		var player = load("res://global/server/SPJPlayer.cs").new(client)
 		player.username = data.username
 		self.add_child(player)
 		self.clients.erase(client)
 		player.accept(data.module)
 		self.new_player.emit(player)
 	else:
-		var player: SPJPlayer = self.get_node_or_null(data.token)
+		var player = self.get_node_or_null(data.token)
 		if player:
 			self.clients.erase(client)
 			player.reassign(client)
@@ -58,7 +63,7 @@ func client_activated(data: Dictionary, client: SPJClient):
 		else:
 			client.close(SPJGameServer.CloseClient.INVALID_TOKEN)
 
-func client_closed(client: SPJClient):
+func client_closed(client):
 	self.clients.erase(client)
 
 func get_players() -> Array:
