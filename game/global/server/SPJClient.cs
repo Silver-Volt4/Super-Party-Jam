@@ -8,9 +8,11 @@ using Godot.Collections;
 public delegate void ConnectionStateChanged();
 public delegate void SPJPacketReceived(SPJPacket packet);
 
+public delegate void OnChange(dynamic new_value);
+
+
 public class SPJState<T>
 {
-    public delegate void OnChange(object new_value);
     private T Value;
     public event OnChange Change;
 
@@ -33,7 +35,6 @@ public static class SPJEventHookExt
 {
     public static void SetupEventHook(this SPJEventHook hook)
     {
-        GD.Print("Setup event hook ", hook);
         var fields = hook.GetType().GetFields();
         var synced =
             from f in fields
@@ -43,33 +44,19 @@ public static class SPJEventHookExt
         {
             var field = sync.field;
             var attribute = sync.attribute;
-            var state = field.GetValue(hook);
-            if (state is SPJState<bool> ga) {
-            }
-            var changeEvent = state.GetType().GetEvent("Change");
-            var invokeMethod = changeEvent.EventHandlerType.GetMethod("Invoke");
-            var parms = invokeMethod.GetParameters();
-            GD.Print(hook);
-            // var d = Delegate.CreateDelegate(
-            //     changeEvent.EventHandlerType, 
-            //     hook.GetClient(), 
-            //     "HandleOnChange",
-            //     true,
-            //     true
-            //     );
-            // GD.Print(d);
-            // changeEvent.AddEventHandler(state, d);
+            dynamic state = field.GetValue(hook);
+            state.Change += new OnChange((object new_value) => hook.HandleOnChange(attribute.Name, new_value));
         }
     }
 
-    public static void HandleOnChange(this SPJEventHook hook, object new_value)
+    public static void HandleOnChange(this SPJEventHook hook, string name, dynamic new_value)
     {
-        GD.Print("got here");
-        // var d = new Dictionary<string, Godot.Variant>
-        // {
-        //     { "phase", Variant.From<int>((int)hook.GetPhase()) }
-        // };
-        // hook.GetClient().Send("sync", d);
+        var d = new Dictionary<string, Godot.Variant>
+        {
+            { "phase", Variant.From<int>((int)hook.GetPhase()) },
+            { "value", Variant.CreateFrom(new_value) }
+        };
+        hook.GetClient().Send("sync", d);
     }
 }
 
@@ -166,7 +153,6 @@ public partial class SPJClient : Resource, SPJEventHook
     {
         this.peer = peer;
         GD.Print(this.active.GetType());
-        active.Change += this.HandleOnChange;
         this.SetupEventHook();
         this.active.Set(true);
     }
@@ -176,7 +162,6 @@ public partial class SPJClient : Resource, SPJEventHook
     {
         data.Add("event", event_name);
         var d = Json.Stringify(data);
-        GD.Print(d);
         peer.SendText(d);
     }
 

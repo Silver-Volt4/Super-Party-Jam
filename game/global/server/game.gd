@@ -22,10 +22,6 @@ signal new_player(player)
 
 var clients: Array = []
 
-func _ready() -> void:
-	var peer = WebSocketPeer.new()
-	var client = load("res://global/server/SPJClient.cs").new(peer)
-
 func start():
 	Helpers.find_port(server, 12004)
 
@@ -44,7 +40,7 @@ func _process(delta):
 		#client.activate.connect(self.client_activated.bind(client), CONNECT_ONE_SHOT)
 
 	for client in self.clients:
-		client.poll()
+		client.Poll()
 
 func client_activated(data: Dictionary, client):
 	if !data.has(&"token"):
