@@ -8,6 +8,7 @@ public partial class SPJPlayer : Node, SPJEventHook
 	public event OnKick KickRequest;
 	// End events
 	private SPJClient? client = null;
+	private SPJModule? module = null;
 	private SPJState<bool> connected = new SPJState<bool>(false);
 	private SPJStorage _storage = new SPJStorage();
 
@@ -36,6 +37,12 @@ public partial class SPJPlayer : Node, SPJEventHook
 		client.Closed += (client) => connected.Set(false);
 	}
 
+	public void SetModule(SPJModule module)
+	{
+		this.module = module;
+		module.SetPlayer(this);
+	}
+
 	public string GetToken() => Name;
 
 	public void Kick()
@@ -45,7 +52,7 @@ public partial class SPJPlayer : Node, SPJEventHook
 
 	public SPJClient GetClient()
 	{
-		return this.client;
+		return client;
 	}
 
 	public override void _Process(double delta)
