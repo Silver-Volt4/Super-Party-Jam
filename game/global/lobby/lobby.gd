@@ -10,16 +10,17 @@ func _ready():
 		$Outer/Inner/VBoxContainer/Games/GamesGrid.add_child(button)
 		button.focus_entered.connect(self.touch_game.bind(button))
 		button.pressed.connect(self.play_game.bind(button))
-	for player in GameServer.get_players():
-		self.add_player(player, true)
-	GameServer.new_player.connect(self.add_player)
+	#for player in GameServer.get_players():
+		#self.add_player(player, true)
+	#GameServer.new_player.connect(self.add_player)
 
 func setup():
-	var self_ip = Helpers.get_self_ip()
-	if self_ip == "":
-		SPJ.alert("Cannot display QR code", "Automatic detection of your IP address has failed.\nThe QR code which allows you to quickly join the game cannot be shown.\nPlease connect manually.")
-	var self_addr = "http://" + self_ip + ":" + str(HttpServer.server.get_local_port())
-	$Instruction/QRCode.texture = Helpers.create_qr_code(self_addr)
+	pass
+	#var self_ip = Helpers.get_self_ip()
+	#if self_ip == "":
+		#SPJ.alert("Cannot display QR code", "Automatic detection of your IP address has failed.\nThe QR code which allows you to quickly join the game cannot be shown.\nPlease connect manually.")
+	#var self_addr = "http://" + self_ip + ":" + str(HttpServer.server.get_local_port())
+	#$Instruction/QRCode.texture = Helpers.create_qr_code(self_addr)
 
 func touch_game(button):
 	var metadata: SPJModuleMetadata = button.metadata

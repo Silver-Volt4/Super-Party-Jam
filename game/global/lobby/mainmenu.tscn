@@ -38,5 +38,13 @@ layout_mode = 1
 [node name="BeginScreen" parent="." instance=ExtResource("4_mt5gh")]
 layout_mode = 1
 
+[node name="TextureRect" type="TextureRect" parent="."]
+texture_filter = 1
+layout_mode = 0
+offset_left = 1420.0
+offset_top = 547.0
+offset_right = 1802.0
+offset_bottom = 918.0
+
 [connection signal="local" from="BeginScreen" to="." method="_on_begin_screen_local"]
 [connection signal="remote" from="BeginScreen" to="." method="_on_begin_screen_remote"]

@@ -3,14 +3,22 @@ using System;
 
 public partial class SPJPlayer : Node, SPJEventHook
 {
+	// Events
+	public delegate void OnKick(SPJPlayer player);
+	public event OnKick KickRequest;
+	// End events
 	private SPJClient? client = null;
+	private SPJState<bool> connected = new SPJState<bool>(false);
+	private SPJStorage _storage = new SPJStorage();
 
-	private bool connected = false;
-
-	public SPJPacket.PacketPhase GetPhase()
+	public enum CloseReason
 	{
-		return SPJPacket.PacketPhase.Player;
+		Replaced = 4200,
 	}
+
+	public SPJPacket.PacketPhase GetPhase() => SPJPacket.PacketPhase.Player;
+
+	public SPJStorage GetStorage() => _storage;
 
 	[SPJSync(name: "username")] public SPJState<string> username = new SPJState<string>("");
 
@@ -24,22 +32,24 @@ public partial class SPJPlayer : Node, SPJEventHook
 	{
 		this.client = client;
 		this.SetupEventHook();
-		connected = true;
-		client.Closed += () => connected = false;
+		connected.Set(true);
+		client.Closed += (client) => connected.Set(false);
 	}
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-	}
+	public string GetToken() => Name;
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public void Kick()
 	{
+		KickRequest?.Invoke(this);
 	}
 
 	public SPJClient GetClient()
 	{
 		return this.client;
+	}
+
+	public override void _Process(double delta)
+	{
+		client.Poll();
 	}
 }
