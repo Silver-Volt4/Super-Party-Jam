@@ -21,7 +21,9 @@ public partial class SPJPlayer : Node, SPJEventHook
 
 	public SPJStorage GetStorage() => _storage;
 
-	[SPJSync(name: "username")] public SPJState<string> username = new SPJState<string>("");
+	[SPJSync(name: "username")] public SPJState<string> username = new("");
+	[SPJSync(name: "spectator")] public SPJState<bool> spectator = new(false);
+	[SPJSync(name: "force_spectator")] public SPJState<bool> force_spectator = new(false);
 
 	public SPJPlayer()
 	{
@@ -41,6 +43,11 @@ public partial class SPJPlayer : Node, SPJEventHook
 	{
 		this.module = module;
 		module.SetPlayer(this);
+	}
+
+	public bool IsSpectator()
+	{
+		return spectator.Get() || force_spectator.Get();
 	}
 
 	public string GetToken() => Name;

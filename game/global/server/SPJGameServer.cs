@@ -9,15 +9,13 @@ public partial class SPJGameServer : Node
 	public event OnNewPlayer NewPlayer;
 	// End events
 
-	public static SPJGameServer Singleton { get; private set; }
-
 	private TcpServer server = new TcpServer();
 	private List<SPJClient> clients = new List<SPJClient>();
 
 	public override void _Ready()
 	{
 		base._Ready();
-		Singleton = this;
+		SPJ.GameServer = this;
 	}
 
 	public void Start()

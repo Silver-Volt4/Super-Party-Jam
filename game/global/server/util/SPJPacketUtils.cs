@@ -19,6 +19,10 @@ public class SPJState<T>
         Value = NewValue;
         Change.Invoke(NewValue);
     }
+    public void Set(Func<T, T> transformer)
+    {
+        Value = transformer(Value);
+    }
 }
 
 public class SPJStorage

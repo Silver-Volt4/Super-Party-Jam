@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://bjl6f5chskikp"]
 
-[ext_resource type="Script" path="res://global/lobby/lobby.gd" id="1_38vlc"]
+[ext_resource type="Script" path="res://global/lobby/Lobby.cs" id="1_a2r2h"]
 [ext_resource type="FontFile" uid="uid://35kpc6wim5bu" path="res://assets/controller/font/anton/anton-v25-latin_latin-ext-regular.woff2" id="2_ay0bm"]
 [ext_resource type="FontFile" uid="uid://bghkb7obnlpat" path="res://assets/controller/font/poppins/poppins-v21-latin-700.woff2" id="3_10b10"]
 
@@ -74,14 +74,17 @@ font_size = 50
 font = ExtResource("3_10b10")
 font_size = 32
 
-[node name="Lobby" type="Control"]
+[node name="Lobby" type="Control" node_paths=PackedStringArray("qr_code", "games_grid", "game_info")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_38vlc")
+script = ExtResource("1_a2r2h")
+qr_code = NodePath("Instruction/QRCode")
+games_grid = NodePath("Outer/Inner/VBoxContainer/Games/GamesGrid")
+game_info = NodePath("Outer/Inner/VBoxContainer/GameInfo")
 metadata/_edit_horizontal_guides_ = [1040.0]
 
 [node name="Outer" type="Panel" parent="."]

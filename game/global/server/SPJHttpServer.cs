@@ -94,6 +94,12 @@ public partial class SPJHttpServer : Node
 	private TcpServer server = new();
 	private List<StreamPeerTcp> clients = new();
 
+	public override void _Ready()
+	{
+		base._Ready();
+		SPJ.HttpServer = this;
+	}
+
 	public void Start()
 	{
 		SPJHelpers.RunServer(server, 12003);
@@ -195,7 +201,7 @@ public partial class SPJHttpServer : Node
 		{
 			response.status = "200 OK";
 			response.headers.Add("Content-Type", "text/plain");
-			content = SPJGameServer.Singleton.GetPort().ToString().ToUtf8Buffer();
+			content = SPJ.GameServer.GetPort().ToString().ToUtf8Buffer();
 		}
 		else
 		{

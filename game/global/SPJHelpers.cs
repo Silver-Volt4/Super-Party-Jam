@@ -21,7 +21,6 @@ public static class SPJHelpers
 		}
 	}
 
-
 	public static string GetSelfIp()
 	{
 		UdpClient udpClient = new UdpClient(60000);
