@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 using System;
 
 public partial class SPJPlayer : Node, SPJEventHook
@@ -27,7 +28,6 @@ public partial class SPJPlayer : Node, SPJEventHook
 
 	public SPJPlayer()
 	{
-		this.SetupEventHook();
 		Name = Guid.NewGuid().ToString();
 	}
 
@@ -37,6 +37,17 @@ public partial class SPJPlayer : Node, SPJEventHook
 		this.SetupEventHook();
 		connected.Set(true);
 		client.Closed += (client) => connected.Set(false);
+		client.SendPacket(new SPJPacket
+		{
+			Type = SPJPacket.PacketType.Call,
+			Phase = SPJPacket.PacketPhase.Player,
+			Name = "accepted",
+			Data = new Dictionary
+			{
+				{"username", username.Get()},
+				{"token", GetToken()},
+			}
+		});
 	}
 
 	public void SetModule(SPJModule module)

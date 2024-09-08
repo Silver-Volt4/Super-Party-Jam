@@ -208,6 +208,7 @@ public partial class SPJHttpServer : Node
 			content = GetFile(request, ref response);
 		}
 		response.headers.Add("Content-Length", content.Length.ToString());
+		response.headers.Add("Access-Control-Allow-Origin", "*");
 
 		var s = response.Serialize();
 		client.PutData(s.ToUtf8Buffer());

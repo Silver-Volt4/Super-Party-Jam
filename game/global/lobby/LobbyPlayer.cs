@@ -3,7 +3,7 @@ using System;
 
 public partial class LobbyPlayer : Panel
 {
-	[Export] private OptionButton options;
+	[Export] private MenuButton options;
 	[Export] private Label nameLabel;
 	[Export] private Control backdrop;
 
@@ -13,11 +13,12 @@ public partial class LobbyPlayer : Panel
 	{
 		options.GetPopup().IdPressed += OptionSelected;
 		UpdateButtons();
-		Player.username.Change += (_) => { nameLabel.Text = Player.username.Get(); };
+		UpdateName();
+		Player.username.Change += (_) => { UpdateName(); };
 		Player.spectator.Change += SpectatorChanged;
 		Player.force_spectator.Change += SpectatorChanged;
-
 	}
+
 	public void Flash()
 	{
 		UpdateButtons();
@@ -26,14 +27,15 @@ public partial class LobbyPlayer : Panel
 		tw.TweenMethod(Callable.From((float p) => (Material as ShaderMaterial)?.SetShaderParameter("progress", p)), 1.0, 0.115, 0.3);
 		tw.Parallel().TweenProperty(nameLabel, "position", nameLabel.Position, 0.5);
 		tw.Parallel().TweenProperty(nameLabel, "size", nameLabel.Size, 0.5);
-		tw.TweenCallback(Callable.From(() =>
-		{
-			(Material as ShaderMaterial)?.SetShaderParameter("progress", 0);
-			nameLabel.Position = nameLabel.Position with { X = nameLabel.Position.X + nameLabel.Size.X };
-			nameLabel.Size = nameLabel.Size with { X = 0 };
-			SPJ.Meta.PlaySfx("join");
-		}));
+		(Material as ShaderMaterial)?.SetShaderParameter("progress", 0);
+		nameLabel.Position = nameLabel.Position with { X = nameLabel.Position.X + nameLabel.Size.X };
+		nameLabel.Size = nameLabel.Size with { X = 0 };
+		SPJ.Meta.PlaySfx("join");
+	}
 
+	private void UpdateName()
+	{
+		nameLabel.Text = Player.username.Get();
 	}
 
 	public void UpdateButtons()

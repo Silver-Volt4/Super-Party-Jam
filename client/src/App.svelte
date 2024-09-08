@@ -15,7 +15,7 @@
 
 	let moduleAwaiter: Promise<SvelteComponent> | null = $state(null);
 
-	client.onClientEvent("disconnected", (event: CustomEvent) => {
+	client.onControllerEvent("disconnected", (event: CustomEvent) => {
 		let code: number = event.detail;
 		if (code >= 4100) {
 			localStorage.removeItem("spjLastGame");
@@ -27,13 +27,13 @@
 		}
 	});
 
-	client.onClientEvent("switching", (event: CustomEvent) => {
+	client.onControllerEvent("switching", (event: CustomEvent) => {
 		switchModule(event.detail);
 	});
 
 	$effect(() => {
-		if (client.userData.token) {
-			localStorage.setItem("spjLastGame", client.userData.token);
+		if (client.token) {
+			localStorage.setItem("spjLastGame", client.token);
 		}
 	});
 
@@ -44,17 +44,17 @@
 	function rename() {
 		let newName = prompt(
 			"Enter your new name:",
-			client.userData.username ?? "",
+			client.username.value ?? "",
 		);
 		if (newName) {
-			client.setUsername(newName);
+			client.username.value = newName;
 		}
 	}
 </script>
 
 {#if client.isInitialized}
 	<header>
-		<div class="header" on:click={rename}>{client.userData.username}</div>
+		<div class="header" onclick={rename}>{client.username.value}</div>
 	</header>
 {/if}
 
@@ -68,7 +68,7 @@
 			{:else}
 				You have chosen to spectate.
 			{/if}
-			<button on:click={() => client.toggleSpectatorMode()}>Toggle</button
+			<button onclick={() => client.spectator.value = !client.spectator.value}>Toggle</button
 			>
 		{:else}
 			You have been forced into spectator mode. You cannot change this.

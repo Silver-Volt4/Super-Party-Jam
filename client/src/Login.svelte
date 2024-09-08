@@ -28,6 +28,7 @@
 
 <div class="login">
     <img src="logo.png" alt="Sonic Party Jam" />
+
     <div class="form">
         <input bind:value={username} placeholder="Enter username..." />
         <button on:click={connect}>

@@ -15,7 +15,6 @@ public partial class BeginScreen : Control
 	{
 		if (@event.IsPressed() && !begin)
 		{
-			GD.Print("start");
 			SPJ.Meta.PlaySfx("start");
 			begin = true;
 			var tw = GetTree().CreateTween();

@@ -4,30 +4,49 @@ using System.Linq;
 using System.Reflection;
 using Godot.Collections;
 using System.Collections.Generic;
+using Godot;
 
 public delegate void OnChange(dynamic new_value);
 
-public class SPJState<T>
+public class SPJState<[MustBeVariant] T> : SPJRawState<T>
 {
-    private T Value;
+    public SPJState(T initial) : base(initial) { }
+
+    public void Set(Variant NewValueVariant)
+    {
+        T NewValue = NewValueVariant.As<T>();
+        Set(NewValue);
+    }
+}
+
+public class SPJRawState<T>
+{
+    protected T Value;
     public event OnChange Change;
 
-    public SPJState(T initial) => Value = initial;
+    public SPJRawState(T initial) => Value = initial;
     public T Get() => Value;
+
     public void Set(T NewValue)
     {
         Value = NewValue;
-        Change.Invoke(NewValue);
+        Change?.Invoke(NewValue);
     }
+
     public void Set(Func<T, T> transformer)
     {
-        Value = transformer(Value);
+        Set(transformer(Value));
+    }
+
+    public void SetSilently(T NewValue)
+    {
+        Value = NewValue;
     }
 }
 
 public class SPJStorage
 {
-    private NativeDictionary.Dictionary<SPJPacket.PacketType, NativeDictionary.Dictionary<string, dynamic>> storage = new NativeDictionary.Dictionary<SPJPacket.PacketType, NativeDictionary.Dictionary<string, dynamic>>();
+    private NativeDictionary.Dictionary<SPJPacket.PacketType, NativeDictionary.Dictionary<string, dynamic>> storage = new();
 
     private NativeDictionary.Dictionary<string, dynamic> GetPacketStorage(SPJPacket.PacketType packetType)
     {

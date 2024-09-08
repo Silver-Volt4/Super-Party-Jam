@@ -1,11 +1,10 @@
 using Godot;
 
-public static class SPJ {
+public static class SPJ
+{
 	public static SPJMeta Meta;
-
-    public static SPJGameServer GameServer;
-    public static SPJHttpServer HttpServer;
-
+	public static SPJGameServer GameServer;
+	public static SPJHttpServer HttpServer;
 }
 
 public partial class SPJMeta : Node

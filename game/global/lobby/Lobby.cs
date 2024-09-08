@@ -6,6 +6,7 @@ public partial class Lobby : Control
 	[Export] private TextureRect qr_code;
 	[Export] private GridContainer games_grid;
 	[Export] private Control game_info;
+	[Export] private Control players;
 
 	public override void _Ready()
 	{
@@ -20,9 +21,11 @@ public partial class Lobby : Control
 			button.FocusEntered += () => TouchGame(button);
 			button.Pressed += () => PlayGame(button);
 		}
-		// for player in GameServer.get_players():
-		// self.add_player(player, true)
-		// GameServer.new_player.connect(self.add_player)		
+		foreach (var player in SPJ.GameServer.GetPlayers())
+		{
+			AddPlayer(player, true);
+		}
+		SPJ.GameServer.NewPlayer += AddPlayer;
 	}
 
 	private void TouchGame(ModuleButton button)
@@ -34,6 +37,15 @@ public partial class Lobby : Control
 
 	private void PlayGame(ModuleButton button)
 	{
+	}
+
+	public void AddPlayer(SPJPlayer player) => AddPlayer(player, false);
+	public void AddPlayer(SPJPlayer player, bool initial = false)
+	{
+		var lp = GD.Load<PackedScene>("res://global/lobby/lobbyplayer.tscn").Instantiate<LobbyPlayer>();
+		lp.Player = player;
+		players.AddChild(lp);
+		if (!initial) lp.Flash();
 	}
 
 	public void Setup()

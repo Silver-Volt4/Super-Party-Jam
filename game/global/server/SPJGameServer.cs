@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class SPJGameServer : Node
 {
@@ -34,16 +35,16 @@ public partial class SPJGameServer : Node
 		{
 			var peer = new WebSocketPeer();
 			peer.InboundBufferSize = 134215680;
-			peer.AcceptStream(server.TakeConnection());
 			var client = new SPJClient(peer);
 			client.Closed += RemoveClient;
 			client.Activate += ActivateClient;
+			peer.AcceptStream(server.TakeConnection());
 			clients.Add(client);
 		}
 
-		foreach (var client in clients)
+		for (int i = clients.Count() - 1; i >= 0; i--)
 		{
-			client.Poll();
+			clients[i].Poll();
 		}
 	}
 
@@ -52,8 +53,8 @@ public partial class SPJGameServer : Node
 		if (token == null)
 		{
 			var player = new SPJPlayer();
+			player.username.SetSilently(username);
 			player.SetClient(client);
-			player.username.Set(username);
 			player.KickRequest += KickPlayer;
 			AddChild(player);
 			RemoveClient(client);
@@ -83,5 +84,10 @@ public partial class SPJGameServer : Node
 	private void RemoveClient(SPJClient client)
 	{
 		clients.Remove(client);
+	}
+
+	public SPJPlayer[] GetPlayers()
+	{
+		return GetChildren().OfType<SPJPlayer>().ToArray();
 	}
 }

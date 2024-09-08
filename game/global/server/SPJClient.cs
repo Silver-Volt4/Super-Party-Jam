@@ -42,11 +42,13 @@ public partial class SPJClient : Resource, SPJEventHook
 
     public void SendPacket(SPJPacket packet)
     {
-        Dictionary data = packet.Data;
-        data.Add("type", (int)packet.Type);
-        data.Add("phase", (int)packet.Phase);
-        data.Add("name", packet.Name);
-        peer.SendText(Json.Stringify(data));
+        peer.SendText(Json.Stringify(new Dictionary()
+        {
+            {"type", (int)packet.Type},
+            {"phase", (int)packet.Phase},
+            {"name", packet.Name},
+            {"data", packet.Data}
+        }));
     }
 
     public void Send(string data)
@@ -88,33 +90,26 @@ public partial class SPJClient : Resource, SPJEventHook
 
     private void CreateAndProcessPacket(Dictionary data)
     {
-        try
+        var fuckVariants = data.GetValueOrDefault("name");
+        var packet = new SPJPacket
         {
-            var packet = new SPJPacket
-            {
-                Type = (SPJPacket.PacketType)data["type"].As<int>(),
-                Phase = (SPJPacket.PacketPhase)data["phase"].As<int>(),
-                Name = data["name"].AsString() ?? throw new Exception()
-            };
-            data.Remove("type");
-            data.Remove("phase");
-            data.Remove("name");
-            packet.Data = data;
-            PacketReceived?.Invoke(this, packet);
-        }
-        catch
-        {
-        }
+            Type = (SPJPacket.PacketType)data.GetValueOrDefault("type").AsInt32(),
+            Phase = (SPJPacket.PacketPhase)data.GetValueOrDefault("phase").AsInt32(),
+            Name = data.GetValueOrDefault("name").AsString(),
+            Data = data.GetValueOrDefault("data").AsGodotDictionary()
+        };
+        PacketReceived?.Invoke(this, packet);
     }
 
     [SPJCallable(name: "register")]
     public void Register(SPJPacket packet)
     {
         Variant username;
-        if (packet.Data.TryGetValue("username", out username)) return;
-        Variant? token = packet.Data.GetValueOrDefault("token");
-        module = packet.Data.GetValueOrDefault("module").AsString();
-        Activate?.Invoke(this, username.AsString(), token?.AsString());
+        if (!packet.Data.TryGetValue("username", out username)) return;
+        string? token = null;
+        if (packet.Data.TryGetValue("token", out var tk)) token = tk.ToString();
+        if (packet.Data.TryGetValue("module", out var module)) this.module = module.AsString();
+        Activate?.Invoke(this, username.AsString(), token);
     }
 
     public string? GetCurrentModule() => module;
