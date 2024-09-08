@@ -5,7 +5,6 @@ export enum ConnectionState {
     CONNECTING,
     ONLINE
 }
-
 export enum CloseClient {
     INVALID_TOKEN = 4100,
     REMOVED_BY_HOST = 4101,
@@ -17,7 +16,6 @@ export enum CloseModule {
     SWITCH_TO_MODULE = 4500,
     EXIT_MODULE = 4501,
 }
-
 export enum SpectatorMode {
     IN_GAME,
     SPECTATOR,
@@ -26,6 +24,25 @@ export enum SpectatorMode {
 
 interface EventListener {
     (evt: CustomEvent): void;
+}
+
+
+type SyncMapping = { [key in PacketPhase]?: { [key: string]: SPJState<any> } };
+
+interface SPJState<T> {
+    value: T;
+    setSilently(val: T): void;
+}
+
+enum PacketType {
+    Sync = 1,
+    Call = 2
+}
+
+enum PacketPhase {
+    Client = 1,
+    Player = 2,
+    Module = 3,
 }
 
 let websocketUrl: URL
@@ -61,28 +78,41 @@ interface SPJEvent extends Event {
 export class SPJClient {
     private ws: WebSocket | undefined
     private module: SPJModule | null = null;
-    private gameEventHandler: EventTarget = new EventTarget();
-    private clientEventHandler: EventTarget = new EventTarget();
+    private eventHandlers = {
+        client: new EventTarget(),
+        player: new EventTarget(),
+        controller: new EventTarget(),
+    };
+    private syncMap: SyncMapping = {};
 
     isInitialized = $state(false);
     connectionState: ConnectionState = $state(ConnectionState.OFFLINE);
-
-    userData: UserData = $state({
-        username: null,
-        token: null,
-    });
-
     spectatorMode: SpectatorMode = $state(SpectatorMode.IN_GAME);
 
+    readonly username: SPJState<string | null>;
+    readonly spectator: SPJState<boolean>;
+    readonly force_spectator: SPJState<boolean>;
+    token: string | null = null;
+
+    constructor() {
+        this.username = this.createSync<string | null>(PacketPhase.Player, "username", null);
+        this.spectator = this.createSync<boolean>(PacketPhase.Player, "spectator", false);
+        this.force_spectator = this.createSync<boolean>(PacketPhase.Player, "force_spectator", false);
+
+        $effect.root(() => {
+            $effect(() => {
+                this.setSpectatorMode();
+            })
+        })
+    }
+
     private reset() {
-        this.userData = {
-            username: null,
-            token: null,
-        }
+        this.username.setSilently(null);
+        this.token = null;
         this.connectionState = ConnectionState.OFFLINE;
         this.spectatorMode = SpectatorMode.IN_GAME;
-        this.gameEventHandler = new EventTarget();
-        this.onGameEvent("spectator", (e: CustomEvent) => this.setSpectatorMode(e.detail))
+        this.eventHandlers.client = new EventTarget();
+        this.eventHandlers.player = new EventTarget();
         this.isInitialized = false;
     }
 
@@ -91,29 +121,33 @@ export class SPJClient {
         this.connectionState = ConnectionState.CONNECTING;
         try {
             this.ws = new WebSocket(await getWebsocketUrl());
-            return await new Promise(async (resolve, reject) => {
+            return await new Promise<void>(async (resolve, reject) => {
                 this.ws?.addEventListener("open", () => {
                     let data: any = {
-                        event: "register",
                         module: this.module?.name ?? ""
                     };
-                    if (this.userData.token) {
-                        data.token = this.userData.token;
+                    if (this.token) {
+                        data.token = this.token;
                     } else {
-                        data.username = this.userData.username;
+                        data.username = this.username.value;
                     }
-                    this.send(data);
+                    this.call(PacketPhase.Client, "register", data);
                 }, { once: true })
 
-                this.onGameEvent("accepted", (e: SPJEvent) => {
-                    let data = e.detail;
-                    this.userData.username = data.username;
-                    this.userData.token = data.token;
-                    this.isInitialized = true;
-                    this.connectionState = ConnectionState.ONLINE;
-                    this.ws?.addEventListener("error", this.onError.bind(this))
-                    this.ws?.removeEventListener("error", reject)
-                }, { once: true })
+                this.onCall(PacketPhase.Player,
+                    "accepted",
+                    (e: SPJEvent) => {
+                        let data = e.detail;
+                        this.username.value = data.username;
+                        this.token = data.token;
+                        this.isInitialized = true;
+                        this.connectionState = ConnectionState.ONLINE;
+                        this.ws?.addEventListener("error", this.onError.bind(this))
+                        this.ws?.removeEventListener("error", reject)
+                        resolve();
+                    },
+                    { once: true }
+                )
                 this.ws?.addEventListener("error", reject, { once: true })
                 this.ws?.addEventListener("close", this.onClose.bind(this))
                 this.ws?.addEventListener("message", this.onMessage.bind(this))
@@ -125,46 +159,83 @@ export class SPJClient {
         }
     }
 
+
+    createSync<T>(phase: PacketPhase, name: string, initial: T): SPJState<T> {
+        let state = $state(initial);
+
+        let reflect = () => this.sync(phase, name, { value: state });
+
+        let wrapper = {
+            get value() { return state },
+            set value(val: T) {
+                state = val;
+                reflect();
+            },
+            setSilently(val: T) { state = val },
+        }
+
+        this.syncMap[phase] ??= {};
+        this.syncMap[phase][name] = wrapper;
+
+        return wrapper;
+    }
+
     async newConnection(username: string) {
         this.reset();
-        this.userData.username = username;
+        this.username.setSilently(username);
         await this.connect();
     }
 
     async resumeConnection(token: string | null = null) {
         if (token) {
             this.reset();
-            this.userData.token = token;
+            this.token = token;
         }
         await this.connect();
     }
 
-    onGameEvent(type: string, callback: EventListener | null, options?: boolean | AddEventListenerOptions | undefined) {
-        this.gameEventHandler.addEventListener(type, callback, options);
+    private getEventHandler(phase: PacketPhase): EventTarget | null {
+        if (phase === PacketPhase.Client) {
+            return this.eventHandlers.client;
+        } else if (phase === PacketPhase.Player) {
+            return this.eventHandlers.player
+        } else if (phase === PacketPhase.Module) {
+            return this.module?.eventHandler ?? null;
+        }
+        return null;
     }
 
-    offGameEvent(type: string, callback: EventListener | null, options?: boolean | EventListenerOptions | undefined) {
-        this.gameEventHandler.removeEventListener(type, callback, options);
+    onCall(phase: PacketPhase.Client | PacketPhase.Player, call: string, callback: EventListener | null, options?: boolean | AddEventListenerOptions | undefined) {
+        this.getEventHandler(phase)?.addEventListener(call, callback, options);
     }
 
-    onClientEvent(type: string, callback: EventListener | null, options?: boolean | AddEventListenerOptions | undefined) {
-        this.clientEventHandler.addEventListener(type, callback, options);
+    offCall(phase: PacketPhase.Client | PacketPhase.Player, call: string, callback: EventListener | null, options?: boolean | EventListenerOptions | undefined) {
+        this.getEventHandler(phase)?.removeEventListener(call, callback, options);
     }
 
-    offClientEvent(type: string, callback: EventListener | null, options?: boolean | EventListenerOptions | undefined) {
-        this.clientEventHandler.removeEventListener(type, callback, options);
+    onControllerEvent(type: string, callback: EventListener | null, options?: boolean | AddEventListenerOptions | undefined) {
+        this.eventHandlers.controller.addEventListener(type, callback, options);
     }
 
-    setUsername(username: string) {
-        this.userData.username = username;
-        this.send({
-            event: "setusername",
-            username: this.userData.username
-        });
+    offControllerEvent(type: string, callback: EventListener | null, options?: boolean | EventListenerOptions | undefined) {
+        this.eventHandlers.controller.removeEventListener(type, callback, options);
     }
 
-    send(data: any) {
-        this.ws?.send(JSON.stringify(data));
+    send(type: PacketType, phase: PacketPhase, name: string, data: any) {
+        this.ws?.send(JSON.stringify({
+            type: type,
+            phase: phase,
+            name: name,
+            data: data
+        }));
+    }
+
+    sync(phase: PacketPhase, name: string, data: any) {
+        this.send(PacketType.Sync, phase, name, data)
+    }
+
+    call(phase: PacketPhase, name: string, data: any) {
+        this.send(PacketType.Call, phase, name, data)
     }
 
     assignModule(module: SPJModule) {
@@ -178,50 +249,49 @@ export class SPJClient {
     }
 
     private onMessage(event: MessageEvent) {
-        let j: any = JSON.parse(event.data);
-        if ("event" in j) {
-            this.gameEventHandler.dispatchEvent(new CustomEvent(j.event, { detail: j }))
+        let jsonData: any = JSON.parse(event.data);
+        var phase: PacketPhase = jsonData.phase;
+        var type: PacketType = jsonData.type;
+        var name: string = jsonData.name;
+        var data: any = jsonData.data;
+        if (type === PacketType.Call) {
+            this.getEventHandler(phase)?.dispatchEvent(new CustomEvent(name, { detail: data }))
+        } else if (type === PacketType.Sync) {
+            var state = this.syncMap[phase]?.[name];
+            state?.setSilently(data.value);
         }
     }
 
     private onClose(e: CloseEvent) {
         this.connectionState = ConnectionState.OFFLINE;
         if (e.code == CloseModule.SWITCH_TO_MODULE) {
-            this.clientEventHandler.dispatchEvent(new CustomEvent("switching", { detail: e.reason }))
+            this.eventHandlers.controller.dispatchEvent(new CustomEvent("switching", { detail: e.reason }))
         }
         else if (e.code == CloseModule.EXIT_MODULE) {
-            this.clientEventHandler.dispatchEvent(new CustomEvent("switching", { detail: null }))
+            this.eventHandlers.controller.dispatchEvent(new CustomEvent("switching", { detail: null }))
         }
         else if (e.code >= 4000) {
             this.isInitialized = false;
             if (e.code >= 4100) {
-                this.userData.username = null;
-                this.userData.token = null;
+                this.username.setSilently(null);
+                this.token = null;
             }
-            this.clientEventHandler.dispatchEvent(new CustomEvent("disconnected", { detail: e.code }))
+            this.eventHandlers.controller.dispatchEvent(new CustomEvent("disconnected", { detail: e.code }))
         } else {
-            this.clientEventHandler.dispatchEvent(new CustomEvent("offline", { detail: e }))
+            this.eventHandlers.controller.dispatchEvent(new CustomEvent("offline", { detail: e }))
             this.connect();
         }
     }
 
     private onError(e: Event) {
         this.connectionState = ConnectionState.OFFLINE;
-        this.clientEventHandler.dispatchEvent(new CustomEvent("error", { detail: e }))
+        this.eventHandlers.controller.dispatchEvent(new CustomEvent("error", { detail: e }))
     }
 
-    toggleSpectatorMode() {
-        console.log("a")
-        this.send({
-            "event": "setspectator",
-            "spectator": this.spectatorMode === SpectatorMode.IN_GAME 
-        })
-    }
-
-    private setSpectatorMode(detail: {spectator: boolean, force_spectator: boolean}) {
-        if(detail.force_spectator) {
+    private setSpectatorMode() {
+        if (this.force_spectator.value) {
             this.spectatorMode = SpectatorMode.SPECTATOR_FORCED;
-        } else if (detail.spectator) {
+        } else if (this.spectator.value) {
             this.spectatorMode = SpectatorMode.SPECTATOR;
         } else {
             this.spectatorMode = SpectatorMode.IN_GAME;

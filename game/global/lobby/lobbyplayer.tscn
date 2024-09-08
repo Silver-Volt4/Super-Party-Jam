@@ -1,9 +1,8 @@
-[gd_scene load_steps=18 format=3 uid="uid://b73svaye6e4st"]
+[gd_scene load_steps=17 format=3 uid="uid://b73svaye6e4st"]
 
 [ext_resource type="FontFile" uid="uid://bghkb7obnlpat" path="res://assets/controller/font/poppins/poppins-v21-latin-700.woff2" id="1_61ko8"]
-[ext_resource type="Script" path="res://global/lobby/lobbyplayer.gd" id="1_kcu30"]
+[ext_resource type="Script" path="res://global/lobby/LobbyPlayer.cs" id="1_vmdrq"]
 [ext_resource type="Texture2D" uid="uid://dyv52grw5t8xl" path="res://assets/icons/dots-vertical.svg" id="3_c3xbb"]
-[ext_resource type="Script" path="res://assets/nodes/SPJButton.gd" id="3_vg8hq"]
 
 [sub_resource type="Shader" id="Shader_dpnh4"]
 code = "shader_type canvas_item;
@@ -79,7 +78,7 @@ PopupMenu/styles/hover = SubResource("StyleBoxFlat_7bhhs")
 PopupMenu/styles/panel = SubResource("StyleBoxFlat_jqqfl")
 PopupPanel/styles/panel = SubResource("StyleBoxEmpty_o77bj")
 
-[node name="Panel" type="Panel"]
+[node name="Panel" type="Panel" node_paths=PackedStringArray("options", "nameLabel", "backdrop")]
 material = SubResource("ShaderMaterial_sbdvx")
 custom_minimum_size = Vector2(719, 100)
 anchors_preset = 10
@@ -89,7 +88,10 @@ offset_bottom = 80.0
 grow_horizontal = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_cm14w")
-script = ExtResource("1_kcu30")
+script = ExtResource("1_vmdrq")
+options = NodePath("OptionsButton")
+nameLabel = NodePath("Name")
+backdrop = NodePath("Backdrop")
 
 [node name="Backdrop" type="Panel" parent="."]
 modulate = Color(1, 0.458824, 1, 1)
@@ -143,10 +145,8 @@ flat = false
 icon_alignment = 1
 item_count = 2
 popup/item_0/text = "Remove"
-popup/item_0/id = 0
 popup/item_1/text = "Force spectator"
 popup/item_1/id = 1
-script = ExtResource("3_vg8hq")
 
 [node name="TextureRect" type="TextureRect" parent="OptionsButton"]
 layout_mode = 1

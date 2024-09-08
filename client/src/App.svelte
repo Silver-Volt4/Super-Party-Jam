@@ -2,7 +2,7 @@
 	import client, {
 		CloseClient,
 		ConnectionState,
-        SpectatorMode,
+		SpectatorMode,
 	} from "./lib/SPJClient.svelte";
 	import Login from "./Login.svelte";
 	import loadModule from "./games/loader";
@@ -15,7 +15,7 @@
 
 	let moduleAwaiter: Promise<SvelteComponent> | null = $state(null);
 
-	client.onClientEvent("disconnected", (event: CustomEvent) => {
+	client.onControllerEvent("disconnected", (event: CustomEvent) => {
 		let code: number = event.detail;
 		if (code >= 4100) {
 			localStorage.removeItem("spjLastGame");
@@ -27,13 +27,13 @@
 		}
 	});
 
-	client.onClientEvent("switching", (event: CustomEvent) => {
+	client.onControllerEvent("switching", (event: CustomEvent) => {
 		switchModule(event.detail);
 	});
 
 	$effect(() => {
-		if (client.userData.token) {
-			localStorage.setItem("spjLastGame", client.userData.token);
+		if (client.token) {
+			localStorage.setItem("spjLastGame", client.token);
 		}
 	});
 
@@ -42,42 +42,44 @@
 	}
 
 	function rename() {
-		let newName = prompt("Enter your new name:", client.userData.username ?? "");
-		if(newName) {
-			client.setUsername(newName);
+		let newName = prompt(
+			"Enter your new name:",
+			client.username.value ?? "",
+		);
+		if (newName) {
+			client.username.value = newName;
 		}
 	}
 </script>
 
 {#if client.isInitialized}
 	<header>
-		<div class="header" on:click={rename}>{client.userData.username}</div>
+		<div class="header" onclick={rename}>{client.username.value}</div>
 	</header>
 {/if}
 
 <div class="screen">
 	{#if !client.isInitialized}
 		<Login></Login>
-	{/if}
-
-	{#if moduleAwaiter === null}
+	{:else if moduleAwaiter === null}
 		{#if client.spectatorMode !== SpectatorMode.SPECTATOR_FORCED}
 			{#if client.spectatorMode === SpectatorMode.IN_GAME}
 				You are in the game.
 			{:else}
 				You have chosen to spectate.
 			{/if}
-			<button on:click={() => client.toggleSpectatorMode()}>Toggle</button>
+			<button onclick={() => client.spectator.value = !client.spectator.value}>Toggle</button
+			>
 		{:else}
 			You have been forced into spectator mode. You cannot change this.
 		{/if}
+	{:else}
+		{#await moduleAwaiter}
+			Loading...
+		{:then module}
+			<svelte:component this={module} {client} />
+		{/await}
 	{/if}
-
-	{#await moduleAwaiter}
-		Loading...
-	{:then module}
-		<svelte:component this={module} {client} />
-	{/await}
 </div>
 
 {#if disconnected}
@@ -91,10 +93,10 @@
 
 <style>
 	header {
-        background: linear-gradient(to right, #c08eff, #5600ff);
+		background: linear-gradient(to right, #c08eff, #5600ff);
 		padding: 0.5em;
 	}
-	
+
 	header div.header {
 		font-size: 3em;
 		text-align: center;

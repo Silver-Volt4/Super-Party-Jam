@@ -1,11 +1,11 @@
 [gd_scene load_steps=5 format=3 uid="uid://bstghi0lq1ke5"]
 
-[ext_resource type="Script" path="res://global/lobby/begin_screen.gd" id="1_garqb"]
 [ext_resource type="Theme" uid="uid://bm57ki0xvrcn0" path="res://assets/resources/Theme.tres" id="1_igug1"]
 [ext_resource type="Texture2D" uid="uid://cgkxwyjm7u47t" path="res://assets/textures/ogorkykonserwowe.png" id="1_lodq2"]
-[ext_resource type="Script" path="res://assets/nodes/SPJButton.gd" id="4_oy8hs"]
+[ext_resource type="Script" path="res://global/lobby/BeginScreen.cs" id="2_vyc10"]
+[ext_resource type="Script" path="res://assets/nodes/SPJButton.cs" id="4_2f30q"]
 
-[node name="BeginScreen" type="Control"]
+[node name="BeginScreen" type="Control" node_paths=PackedStringArray("welcomeText", "modeSelect", "explanation")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,7 +13,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_igug1")
-script = ExtResource("1_garqb")
+script = ExtResource("2_vyc10")
+welcomeText = NodePath("WelcomeText")
+modeSelect = NodePath("ModeSelect")
+explanation = NodePath("ModeSelect/Explanation")
 
 [node name="Logo" type="TextureRect" parent="."]
 texture_filter = 1
@@ -70,7 +73,7 @@ offset_bottom = -184.0
 size_flags_horizontal = 3
 size_flags_vertical = 5
 text = "Local play"
-script = ExtResource("4_oy8hs")
+script = ExtResource("4_2f30q")
 
 [node name="Remote" type="Button" parent="ModeSelect"]
 layout_mode = 2
@@ -81,7 +84,7 @@ offset_bottom = -184.0
 size_flags_horizontal = 3
 size_flags_vertical = 5
 text = "Remote play"
-script = ExtResource("4_oy8hs")
+script = ExtResource("4_2f30q")
 
 [node name="Explanation" type="Label" parent="ModeSelect"]
 layout_mode = 1
