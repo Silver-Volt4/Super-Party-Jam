@@ -6,7 +6,7 @@ using Godot.Collections;
 using System.Collections.Generic;
 using Godot;
 
-public delegate void OnChange(dynamic new_value);
+public delegate void OnChange<T>(T new_value);
 
 public class SPJState<[MustBeVariant] T> : SPJRawState<T>
 {
@@ -22,8 +22,8 @@ public class SPJState<[MustBeVariant] T> : SPJRawState<T>
 public class SPJRawState<T>
 {
     protected T Value;
-    public event OnChange Change;
-
+    public event OnChange<T> Change;
+    public event Action ChangeAction;
     public SPJRawState(T initial) => Value = initial;
     public T Get() => Value;
 
@@ -31,6 +31,7 @@ public class SPJRawState<T>
     {
         Value = NewValue;
         Change?.Invoke(NewValue);
+        ChangeAction?.Invoke();
     }
 
     public void Set(Func<T, T> transformer)
@@ -60,6 +61,11 @@ public class SPJStorage
         return storage[packetType];
     }
 
+    public void Clear()
+    {
+        storage.Clear();
+    }
+
     public void Add(SPJPacket.PacketType packetType, string name, dynamic value)
     {
         var packetStorage = GetPacketStorage(packetType);
@@ -85,6 +91,7 @@ public static class SPJEventHookExt
 {
     public static void SetupEventHook(this SPJEventHook hook)
     {
+        hook.GetStorage().Clear();
         var syncAttributes =
             from f in hook.GetType().GetFields()
             where f.GetCustomAttribute<SPJSync>() != null
@@ -99,7 +106,7 @@ public static class SPJEventHookExt
             {
                 hook.GetStorage().Add(SPJPacket.PacketType.Sync, attribute.Name, state);
             }
-            state.Change += new OnChange((object new_value) => hook.HandleOnChange(attribute.Name, new_value));
+            state.ChangeAction += new Action(() => HandleOnChange(hook, attribute.Name, state.Get()));
         }
 
         var callableAttributes =
@@ -131,12 +138,10 @@ public static class SPJEventHookExt
             Name = name,
             Data = data
         });
-
     }
 
     private static void HandlePacket(this SPJEventHook hook, SPJClient client, SPJPacket packet)
     {
-        if (packet.Phase != hook.GetPhase()) return;
         var subject = hook.GetStorage().Get(packet.Type, packet.Name);
         if (subject == null) return;
 

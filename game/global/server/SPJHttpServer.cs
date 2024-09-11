@@ -102,7 +102,7 @@ public partial class SPJHttpServer : Node
 
 	public void Start()
 	{
-		SPJHelpers.RunServer(server, 12003);
+		SPJ.RunServer(server, 12003);
 	}
 
 	public int GetPort()

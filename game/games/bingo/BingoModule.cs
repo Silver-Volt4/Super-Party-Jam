@@ -2,6 +2,7 @@ using Godot;
 
 partial class BingoModule : SPJModule
 {
+    public override string GetName() => "bingo";
     public override SPJModuleMetadata GetMetadata() => new()
     {
         Id = "bingo",

@@ -1,14 +1,17 @@
 using Godot;
 
-partial class DiceModule : SPJModule
+public partial class DiceModule : SPJModule
 {
+    public override string GetName() => "dice";
     public override SPJModuleMetadata GetMetadata() => new()
     {
-        Id = "dice",
+        Id = GetName(),
         DisplayName = "Test module",
         Description = "This is not an actual game, it's intended for testing!",
         MinPlayers = 0,
         MaxPlayers = -1,
         Thumbnail = GD.Load<Texture2D>("res://games/dice/gallery/thumbnail.png")
     };
+
+    [SPJSync(name: "dice")] public SPJState<int> dice = new(0);
 }

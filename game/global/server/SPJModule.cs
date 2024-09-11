@@ -7,8 +7,15 @@ public abstract partial class SPJModule : Resource, SPJEventHook
 {
     protected SPJPlayer player;
     private SPJStorage _storage = new SPJStorage();
-
+    public abstract string GetName();
     public abstract SPJModuleMetadata GetMetadata();
+
+    public enum CloseReason
+    {
+        SwitchToModule = 4300,
+        ClearModule = 4301,
+    }
+
     public void SetPlayer(SPJPlayer player)
     {
         this.player = player;
@@ -29,6 +36,12 @@ public abstract partial class SPJModule : Resource, SPJEventHook
     {
         return _storage;
     }
+
+    internal void ChangeModule(string v)
+    {
+        throw new NotImplementedException();
+    }
+
 }
 
 public class SPJModuleMetadata

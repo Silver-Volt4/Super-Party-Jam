@@ -13,8 +13,8 @@ export enum ClosePlayer {
     REPLACED = 4200,
 }
 export enum CloseModule {
-    SWITCH_TO_MODULE = 4500,
-    EXIT_MODULE = 4501,
+    SWITCH_TO_MODULE = 4300,
+    EXIT_MODULE = 4301,
 }
 export enum SpectatorMode {
     IN_GAME,
@@ -29,17 +29,17 @@ interface EventListener {
 
 type SyncMapping = { [key in PacketPhase]?: { [key: string]: SPJState<any> } };
 
-interface SPJState<T> {
+export interface SPJState<T> {
     value: T;
     setSilently(val: T): void;
 }
 
-enum PacketType {
+export enum PacketType {
     Sync = 1,
     Call = 2
 }
 
-enum PacketPhase {
+export enum PacketPhase {
     Client = 1,
     Player = 2,
     Module = 3,
@@ -124,7 +124,7 @@ export class SPJClient {
             return await new Promise<void>(async (resolve, reject) => {
                 this.ws?.addEventListener("open", () => {
                     let data: any = {
-                        module: this.module?.name ?? ""
+                        module: this.module?.name
                     };
                     if (this.token) {
                         data.token = this.token;

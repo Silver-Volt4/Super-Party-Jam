@@ -1,12 +1,14 @@
+import { PacketPhase, type SPJClient, type SPJState } from "../../lib/SPJClient.svelte";
 import SPJModule from "../../lib/SPJModule";
 
 export default class DiceModule extends SPJModule {
     name: string = "dice";
-    
-    dice = $state(0)
+    dice: SPJState<number>;
 
-    constructor() {
+    constructor(client: SPJClient) {
         super();
-        $effect(() => this.sync("dice", this.dice))
+        this.client = client;
+        client.assignModule(this);
+        this.dice = this.client.createSync<number>(PacketPhase.Module, "dice", 0);
     }
 } 

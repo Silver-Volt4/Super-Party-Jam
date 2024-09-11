@@ -12,11 +12,10 @@ public partial class Lobby : Control
 	{
 		var games = DirAccess.GetDirectoriesAt("res://games/");
 		var buttonBase = GD.Load<PackedScene>("res://global/lobby/modulebutton.tscn").Instantiate<ModuleButton>();
-		foreach (var game in games)
+		foreach (var game in SPJ.GetMinigames())
 		{
 			var button = buttonBase.Duplicate() as ModuleButton;
-			var module = GD.Load<CSharpScript>($"res://games/{game}/{game.Capitalize()}Module.cs").New().As<SPJModule>();
-			button.metadata = module.GetMetadata();
+			button.metadata = game;
 			games_grid.AddChild(button);
 			button.FocusEntered += () => TouchGame(button);
 			button.Pressed += () => PlayGame(button);
@@ -37,6 +36,23 @@ public partial class Lobby : Control
 
 	private void PlayGame(ModuleButton button)
 	{
+		SPJModuleMetadata metadata = button.metadata;
+		if (metadata.PlayerCountSatisfied(SPJ.GameServer.GetPlayers().Length))
+		{
+			LaunchGame(metadata);
+		}
+		else
+		{
+			SPJ.Meta.Alert("Insufficient player count",
+			 "You do not have enough players to play this game."
+			);
+		}
+	}
+
+	private void LaunchGame(SPJModuleMetadata metadata)
+	{
+		SPJ.Meta.PlaySfx("select");
+		SPJ.Meta.LaunchGame("dice");
 	}
 
 	public void AddPlayer(SPJPlayer player) => AddPlayer(player, false);
@@ -50,7 +66,7 @@ public partial class Lobby : Control
 
 	public void Setup()
 	{
-		var self_ip = SPJHelpers.GetSelfIp();
+		var self_ip = SPJ.GetSelfIp();
 		if (self_ip == "")
 		{
 			SPJ.Meta.Alert(
@@ -59,6 +75,6 @@ public partial class Lobby : Control
 			);
 		}
 		var port = SPJ.GameServer.GetPort();
-		qr_code.Texture = ImageTexture.CreateFromImage(SPJHelpers.GetQRCode($"http://{self_ip}:{port}"));
+		qr_code.Texture = ImageTexture.CreateFromImage(SPJ.GetQRCode($"http://{self_ip}:{port}"));
 	}
 }

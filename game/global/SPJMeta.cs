@@ -1,15 +1,12 @@
+using System;
+using System.Linq;
 using Godot;
-
-public static class SPJ
-{
-	public static SPJMeta Meta;
-	public static SPJGameServer GameServer;
-	public static SPJHttpServer HttpServer;
-}
 
 public partial class SPJMeta : Node
 {
 	[Export] private CanvasLayer overlays;
+
+	private SPJPlayer[] players = { };
 
 	public override void _Ready()
 	{
@@ -30,28 +27,24 @@ public partial class SPJMeta : Node
 		GetNode<AudioStreamPlayer>(sound).Play();
 	}
 
-	public SPJModule LoadModuleClass(string name)
+	public void LaunchGame(string name)
 	{
-		return GD.Load<CSharpScript>($"res://games/{name}/{name.Capitalize()}Module.cs").New().As<SPJModule>();
+		var scene = GD.Load<PackedScene>($"res://games/{name}/root.tscn");
+		var activePlayers = SPJ.GameServer.GetPlayers().Where(p => !p.IsSpectator());
+		var module = SPJ.LoadModuleClass(name);
+		foreach (var player in activePlayers)
+		{
+			player.SetModule(module.New().As<SPJModule>());
+		}
+		players = activePlayers.ToArray();
+		GetTree().CallDeferred(SceneTree.MethodName.ChangeSceneToPacked, scene);
 	}
-
-	// public void switch_module(string name, SPJPlayer[] players)
-	// {
-	// 	var module = load_module_class(name)
-	// 	for p in players:
-	// 		p.module = module.new()
-	// 	self.__players = players
-	// 	get_tree().change_scene_to_file.call_deferred("res://games/" + name + "/root.tscn")
-	// 	}
-
-	// public void get_players()
-	// {
-	// 	return __players
-	// 	}
 
 	public void Alert(string title, string text)
 	{
 		var dialog = GD.Load<PackedScene>("res://global/dialog/dialog.tscn").Instantiate<Dialog>();
 		overlays.AddChild(dialog.Title(title).Text(text).Alert("OK"));
 	}
+
+	public SPJPlayer[] GetPlayers() => players;
 }

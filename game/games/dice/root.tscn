@@ -1,9 +1,9 @@
 [gd_scene load_steps=2 format=3 uid="uid://cs86sd3j22xh"]
 
-[ext_resource type="Script" path="res://games/dice/game/Dice.gd" id="1_5jv72"]
+[ext_resource type="Script" path="res://games/dice/DiceGame.cs" id="1_bpmte"]
 
 [node name="Root" type="Node2D"]
-script = ExtResource("1_5jv72")
+script = ExtResource("1_bpmte")
 
 [node name="Label" type="Label" parent="."]
 offset_left = 20.0

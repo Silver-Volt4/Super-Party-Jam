@@ -34,6 +34,7 @@ public partial class SPJPlayer : Node, SPJEventHook
 	public void SetClient(SPJClient client)
 	{
 		this.client = client;
+		if (!CheckModule()) return;
 		this.SetupEventHook();
 		connected.Set(true);
 		client.Closed += (client) => connected.Set(false);
@@ -48,12 +49,25 @@ public partial class SPJPlayer : Node, SPJEventHook
 				{"token", GetToken()},
 			}
 		});
+		SetModule();
 	}
 
-	public void SetModule(SPJModule module)
+	public void SetModule() => SetModule(module);
+	public void SetModule(SPJModule? module)
 	{
 		this.module = module;
-		module.SetPlayer(this);
+		module?.SetPlayer(this);
+		CheckModule();
+	}
+
+	private bool CheckModule()
+	{
+		if (module?.GetName() != client?.GetCurrentModule())
+		{
+			client.RequestModuleChange(module?.GetName());
+			return false;
+		}
+		return true;
 	}
 
 	public bool IsSpectator()
@@ -71,6 +85,11 @@ public partial class SPJPlayer : Node, SPJEventHook
 	public SPJClient GetClient()
 	{
 		return client;
+	}
+
+	public SPJModule GetModule()
+	{
+		return module;
 	}
 
 	public override void _Process(double delta)

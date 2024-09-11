@@ -14,15 +14,23 @@ public partial class LobbyPlayer : Panel
 		options.GetPopup().IdPressed += OptionSelected;
 		UpdateButtons();
 		UpdateName();
-		Player.username.Change += (_) => { UpdateName(); };
+		Player.username.ChangeAction += UpdateName;
 		Player.spectator.Change += SpectatorChanged;
 		Player.force_spectator.Change += SpectatorChanged;
+	}
+
+	public override void _ExitTree()
+	{
+		base._ExitTree();
+		Player.username.ChangeAction -= UpdateName;
+		Player.spectator.Change -= SpectatorChanged;
+		Player.force_spectator.Change -= SpectatorChanged;
 	}
 
 	public void Flash()
 	{
 		UpdateButtons();
-		SpectatorChanged();
+		SpectatorChanged(Player.IsSpectator());
 		var tw = GetTree().CreateTween().SetEase(Tween.EaseType.Out).SetTrans(Tween.TransitionType.Circ);
 		tw.TweenMethod(Callable.From((float p) => (Material as ShaderMaterial)?.SetShaderParameter("progress", p)), 1.0, 0.115, 0.3);
 		tw.Parallel().TweenProperty(nameLabel, "position", nameLabel.Position, 0.5);
@@ -43,9 +51,9 @@ public partial class LobbyPlayer : Panel
 		options.GetPopup().SetItemText(1, Player.force_spectator.Get() ? "Unenforce spectator" : "Force spectator");
 	}
 
-	private void SpectatorChanged(object _ = null)
+	private void SpectatorChanged(bool spectator)
 	{
-		var modulate = Player.IsSpectator() ? 0.5f : 1f;
+		var modulate = spectator ? 0.5f : 1f;
 		SelfModulate = SelfModulate with { A = modulate };
 		backdrop.SelfModulate = SelfModulate with { A = modulate };
 	}

@@ -104,14 +104,26 @@ public partial class SPJClient : Resource, SPJEventHook
     [SPJCallable(name: "register")]
     public void Register(SPJPacket packet)
     {
-        Variant username;
-        if (!packet.Data.TryGetValue("username", out username)) return;
+        string? username = null;
         string? token = null;
-        if (packet.Data.TryGetValue("token", out var tk)) token = tk.ToString();
+        if (packet.Data.TryGetValue("username", out var packet_username)) username = packet_username.ToString();
+        if (packet.Data.TryGetValue("token", out var packet_token)) token = packet_token.ToString();
         if (packet.Data.TryGetValue("module", out var module)) this.module = module.AsString();
-        Activate?.Invoke(this, username.AsString(), token);
+        Activate?.Invoke(this, username, token);
     }
 
     public string? GetCurrentModule() => module;
     SPJClient SPJEventHook.GetClient() => this;
+
+    public void RequestModuleChange(string? module_name)
+    {
+        if (module_name != null)
+        {
+            Close((int)SPJModule.CloseReason.SwitchToModule, module_name);
+        }
+        else
+        {
+            Close((int)SPJModule.CloseReason.ClearModule);
+        }
+    }
 }

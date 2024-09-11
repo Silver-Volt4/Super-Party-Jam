@@ -4,9 +4,32 @@ using System;
 using System.Linq;
 using System.Net.Sockets;
 
-public static class SPJHelpers
+public static class SPJ
 {
+	public static SPJMeta Meta;
+	public static SPJGameServer GameServer;
+	public static SPJHttpServer HttpServer;
 	private static QRCodeGenerator generator = new QRCodeGenerator();
+
+	public static CSharpScript LoadModuleClass(string name)
+	{
+		return GD.Load<CSharpScript>($"res://games/{name}/{name.Capitalize()}Module.cs");
+	}
+
+	public static SPJModuleMetadata[] GetMinigames()
+	{
+		var games = DirAccess.GetDirectoriesAt("res://games/");
+		var buttonBase = GD.Load<PackedScene>("res://global/lobby/modulebutton.tscn").Instantiate<ModuleButton>();
+		SPJModuleMetadata[] modules = new SPJModuleMetadata[games.Length];
+		var index = 0;
+		foreach (var game in games)
+		{
+			var button = buttonBase.Duplicate() as ModuleButton;
+			modules.SetValue(LoadModuleClass(game).New().As<SPJModule>().GetMetadata(), index++);
+		}
+		return modules;
+	}
+
 	public static int RunServer(TcpServer server, int basePort)
 	{
 		var port = (ushort)basePort;

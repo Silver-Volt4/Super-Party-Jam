@@ -21,7 +21,7 @@ public partial class SPJGameServer : Node
 
 	public void Start()
 	{
-		SPJHelpers.RunServer(server, 12004);
+		SPJ.RunServer(server, 12004);
 	}
 
 	public int GetPort()
@@ -48,9 +48,9 @@ public partial class SPJGameServer : Node
 		}
 	}
 
-	private void ActivateClient(SPJClient client, string username, string? token)
+	private void ActivateClient(SPJClient client, string? username, string? token)
 	{
-		if (token == null)
+		if (token == null && username != null)
 		{
 			var player = new SPJPlayer();
 			player.username.SetSilently(username);
@@ -60,7 +60,7 @@ public partial class SPJGameServer : Node
 			RemoveClient(client);
 			NewPlayer?.Invoke(player);
 		}
-		else
+		else if (token != null)
 		{
 			var player = GetNodeOrNull(token) as SPJPlayer;
 			if (player != null)
