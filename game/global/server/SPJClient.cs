@@ -4,20 +4,20 @@ using Godot.Collections;
 using System.Collections.Generic;
 
 [GlobalClass]
-public partial class SPJClient : Resource, SPJEventHook
+public partial class SPJClient : Resource, MPacketHandler
 {
     // Events
     public delegate void OnConnectionStateChanged(SPJClient client);
-    public delegate void OnPacketReceived(SPJClient client, SPJPacket packet);
+    public delegate void OnPacketReceived(SPJClient client, Packet packet);
     public delegate void OnActivate(SPJClient client, string username, string? token);
     public event OnConnectionStateChanged Connected;
     public event OnConnectionStateChanged Closed;
     public event OnPacketReceived PacketReceived;
     public event OnActivate Activate;
     // End events
+
     private WebSocketPeer peer;
     private WebSocketPeer.State peer_state = WebSocketPeer.State.Closed;
-    private SPJStorage _storage = new SPJStorage();
     private string? module = null;
 
     public enum CloseReason
@@ -26,21 +26,19 @@ public partial class SPJClient : Resource, SPJEventHook
         RemovedByHost = 4101,
     }
 
-    public SPJPacket.PacketPhase GetPhase() => SPJPacket.PacketPhase.Client;
+    public PacketPhase GetPhase() => PacketPhase.Client;
 
-    public SPJStorage GetStorage() => _storage;
-
-    [SPJSync("active", read_only: true)] public SPJState<bool> active = new SPJState<bool>(false);
+    [Sync("active", read_only: true)] public SPJState<bool> active = new SPJState<bool>(false);
 
     public SPJClient(
         WebSocketPeer peer
     )
     {
         this.peer = peer;
-        this.SetupEventHook();
+        this.InitHandler();
     }
 
-    public void SendPacket(SPJPacket packet)
+    public void SendPacket(Packet packet)
     {
         peer.SendText(Json.Stringify(new Dictionary()
         {
@@ -90,19 +88,18 @@ public partial class SPJClient : Resource, SPJEventHook
 
     private void CreateAndProcessPacket(Dictionary data)
     {
-        var fuckVariants = data.GetValueOrDefault("name");
-        var packet = new SPJPacket
+        var packet = new Packet
         {
-            Type = (SPJPacket.PacketType)data.GetValueOrDefault("type").AsInt32(),
-            Phase = (SPJPacket.PacketPhase)data.GetValueOrDefault("phase").AsInt32(),
+            Type = (PacketType)data.GetValueOrDefault("type").AsInt32(),
+            Phase = (PacketPhase)data.GetValueOrDefault("phase").AsInt32(),
             Name = data.GetValueOrDefault("name").AsString(),
             Data = data.GetValueOrDefault("data").AsGodotDictionary()
         };
-        PacketReceived?.Invoke(this, packet);
+        this.HandlePacket(packet);
     }
 
-    [SPJCallable(name: "register")]
-    public void Register(SPJPacket packet)
+    [Callable(name: "register")]
+    public void Register(Packet packet)
     {
         string? username = null;
         string? token = null;
@@ -113,7 +110,7 @@ public partial class SPJClient : Resource, SPJEventHook
     }
 
     public string? GetCurrentModule() => module;
-    SPJClient SPJEventHook.GetClient() => this;
+    SPJClient MPacketHandler.GetClient() => this;
 
     public void RequestModuleChange(string? module_name)
     {

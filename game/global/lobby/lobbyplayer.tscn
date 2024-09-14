@@ -1,6 +1,6 @@
 [gd_scene load_steps=17 format=3 uid="uid://b73svaye6e4st"]
 
-[ext_resource type="FontFile" uid="uid://bghkb7obnlpat" path="res://assets/controller/font/poppins/poppins-v21-latin-700.woff2" id="1_61ko8"]
+[ext_resource type="FontFile" uid="uid://c0u2gsn63akcw" path="res://assets/controller/font/poppins/poppins-v21-latin-700.woff2" id="1_61ko8"]
 [ext_resource type="Script" path="res://global/lobby/LobbyPlayer.cs" id="1_vmdrq"]
 [ext_resource type="Texture2D" uid="uid://dyv52grw5t8xl" path="res://assets/icons/dots-vertical.svg" id="3_c3xbb"]
 

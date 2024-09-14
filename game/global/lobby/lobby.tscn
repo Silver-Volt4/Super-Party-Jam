@@ -1,8 +1,8 @@
 [gd_scene load_steps=15 format=3 uid="uid://bjl6f5chskikp"]
 
 [ext_resource type="Script" path="res://global/lobby/Lobby.cs" id="1_a2r2h"]
-[ext_resource type="FontFile" uid="uid://35kpc6wim5bu" path="res://assets/controller/font/anton/anton-v25-latin_latin-ext-regular.woff2" id="2_ay0bm"]
-[ext_resource type="FontFile" uid="uid://bghkb7obnlpat" path="res://assets/controller/font/poppins/poppins-v21-latin-700.woff2" id="3_10b10"]
+[ext_resource type="FontFile" uid="uid://ctksus6g7kq70" path="res://assets/controller/font/anton/anton-v25-latin_latin-ext-regular.woff2" id="2_ay0bm"]
+[ext_resource type="FontFile" uid="uid://c0u2gsn63akcw" path="res://assets/controller/font/poppins/poppins-v21-latin-700.woff2" id="3_10b10"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jatgm"]
 

@@ -45,24 +45,24 @@ public partial class ModuleButton : Button
 	{
 		SPJ.Meta.PlaySfx("cursor");
 		InitTween();
-		tween.TweenMethod(new Callable(this, "AnimHover"), 0.0, 1.0, 0.1);
+        tween.TweenMethod(new Godot.Callable(this, "AnimHover"), 0.0, 1.0, 0.1);
 	}
 
 	private void Unfocus()
 	{
 		InitTween();
-		tween.TweenMethod(new Callable(this, "AnimHover"), 1.0, 0.0, 0.1);
+        tween.TweenMethod(new Godot.Callable(this, "AnimHover"), 1.0, 0.0, 0.1);
 	}
 
 	private void Press()
 	{
 		InitTween();
-		tween.TweenMethod(new Callable(this, "AnimPress"), 0.0, 1.0, 0.1);
+        tween.TweenMethod(new Godot.Callable(this, "AnimPress"), 0.0, 1.0, 0.1);
 	}
 
 	private void Unpress()
 	{
 		InitTween();
-		tween.TweenMethod(new Callable(this, "AnimPress"), 1.0, 0.0, 0.1);
+        tween.TweenMethod(new Godot.Callable(this, "AnimPress"), 1.0, 0.0, 0.1);
 	}
 }

@@ -3,11 +3,11 @@ using Godot;
 using Godot.Collections;
 using System.Collections.Generic;
 
-public abstract partial class SPJModule : Resource, SPJEventHook
+public abstract partial class SPJModule : Resource, MPacketHandler
 {
     protected SPJPlayer player;
-    private SPJStorage _storage = new SPJStorage();
-    public abstract string GetName();
+
+    public new abstract string GetName();
     public abstract SPJModuleMetadata GetMetadata();
 
     public enum CloseReason
@@ -19,7 +19,8 @@ public abstract partial class SPJModule : Resource, SPJEventHook
     public void SetPlayer(SPJPlayer player)
     {
         this.player = player;
-        this.SetupEventHook();
+        this.InitHandler();
+		player.UnhandledPacket += this.HandlePacket;
     }
 
     public SPJClient GetClient()
@@ -27,21 +28,15 @@ public abstract partial class SPJModule : Resource, SPJEventHook
         return player.GetClient();
     }
 
-    public SPJPacket.PacketPhase GetPhase()
+    public PacketPhase GetPhase()
     {
-        return SPJPacket.PacketPhase.Module;
-    }
-
-    public SPJStorage GetStorage()
-    {
-        return _storage;
+        return PacketPhase.Module;
     }
 
     internal void ChangeModule(string v)
     {
         throw new NotImplementedException();
     }
-
 }
 
 public class SPJModuleMetadata
@@ -52,7 +47,6 @@ public class SPJModuleMetadata
     public int MinPlayers;
     public int MaxPlayers;
     public Texture2D Thumbnail;
-
 
     public string DescribePlayerCount()
     {

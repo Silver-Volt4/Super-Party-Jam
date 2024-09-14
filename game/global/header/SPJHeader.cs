@@ -20,10 +20,10 @@ public partial class SPJHeader : Control
 		label.Visible = !show;
 		var tw = CreateTween().SetEase(Tween.EaseType.InOut).SetTrans(Tween.TransitionType.Circ);
 		var callbackFlasherProgress = (float p) => { FlasherProgress(p); };
-		tw.TweenMethod(Callable.From(callbackFlasherProgress), 0.0, 1.0, 0.15);
-		tw.TweenCallback(Callable.From(() => header.Visible = show));
-		tw.TweenCallback(Callable.From(() => label.Visible = show));
-		tw.TweenMethod(Callable.From(callbackFlasherProgress), 1.0, 2.0, 0.15);
+		tw.TweenMethod(Godot.Callable.From(callbackFlasherProgress), 0.0, 1.0, 0.15);
+		tw.TweenCallback(Godot.Callable.From(() => header.Visible = show));
+		tw.TweenCallback(Godot.Callable.From(() => label.Visible = show));
+		tw.TweenMethod(Godot.Callable.From(callbackFlasherProgress), 1.0, 2.0, 0.15);
 		await ToSignal(tw, Tween.SignalName.Finished);
 	}
 }

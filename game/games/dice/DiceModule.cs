@@ -13,5 +13,5 @@ public partial class DiceModule : SPJModule
         Thumbnail = GD.Load<Texture2D>("res://games/dice/gallery/thumbnail.png")
     };
 
-    [SPJSync(name: "dice")] public SPJState<int> dice = new(0);
+    [Sync(name: "dice")] public SPJState<int> dice = new(0);
 }

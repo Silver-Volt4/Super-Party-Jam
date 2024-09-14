@@ -20,7 +20,7 @@ public partial class BeginScreen : Control
 			var tw = GetTree().CreateTween();
 			tw.TweenProperty(welcomeText, "modulate:a", 0, 0.1);
 			tw.TweenProperty(modeSelect, "modulate:a", 0, 0);
-			tw.TweenCallback(new Callable(modeSelect, Control.MethodName.Show));
+			tw.TweenCallback(new Godot.Callable(modeSelect, Control.MethodName.Show));
 			tw.TweenProperty(modeSelect, "modulate:a", 1, 0.1);
 			tw.Play();
 		}

@@ -28,12 +28,12 @@ public partial class MainMenu : TextureRect
 		SPJ.HttpServer.Start();
 		var tw = CreateTween();
 		tw.TweenProperty(beginScreen, "modulate:a", 0, 0.1);
-		tw.TweenCallback(new Callable(beginScreen, BeginScreen.MethodName.QueueFree));
-		tw.TweenCallback(Callable.From(() =>
+		tw.TweenCallback(new Godot.Callable(beginScreen, BeginScreen.MethodName.QueueFree));
+		tw.TweenCallback(Godot.Callable.From(() =>
 		{
-			lobby.Modulate = lobby.Modulate with { A = 0f };
-			lobby.Show();
-			lobby.Setup();
+            lobby.Modulate = lobby.Modulate with { A = 0f };
+            lobby.Show();
+            lobby.Setup();
 		}));
 		tw.TweenProperty(lobby, "modulate:a", 1.0, 0.1);
 	}

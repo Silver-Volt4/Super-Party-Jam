@@ -2,29 +2,27 @@ using Godot;
 using Godot.Collections;
 using System;
 
-public partial class SPJPlayer : Node, SPJEventHook
+public partial class SPJPlayer : Node, MPacketHandler
 {
 	// Events
 	public delegate void OnKick(SPJPlayer player);
 	public event OnKick KickRequest;
+
 	// End events
 	private SPJClient? client = null;
 	private SPJModule? module = null;
 	private SPJState<bool> connected = new SPJState<bool>(false);
-	private SPJStorage _storage = new SPJStorage();
 
 	public enum CloseReason
 	{
 		Replaced = 4200,
 	}
 
-	public SPJPacket.PacketPhase GetPhase() => SPJPacket.PacketPhase.Player;
+	public PacketPhase GetPhase() => PacketPhase.Player;
 
-	public SPJStorage GetStorage() => _storage;
-
-	[SPJSync(name: "username")] public SPJState<string> username = new("");
-	[SPJSync(name: "spectator")] public SPJState<bool> spectator = new(false);
-	[SPJSync(name: "force_spectator")] public SPJState<bool> force_spectator = new(false);
+	[Sync(name: "username")] public SPJState<string> username = new("");
+	[Sync(name: "spectator")] public SPJState<bool> spectator = new(false);
+	[Sync(name: "force_spectator")] public SPJState<bool> force_spectator = new(false);
 
 	public SPJPlayer()
 	{
@@ -35,13 +33,14 @@ public partial class SPJPlayer : Node, SPJEventHook
 	{
 		this.client = client;
 		if (!CheckModule()) return;
-		this.SetupEventHook();
+		this.InitHandler();
+		client.UnhandledPacket += this.HandlePacket;
 		connected.Set(true);
 		client.Closed += (client) => connected.Set(false);
-		client.SendPacket(new SPJPacket
+		client.SendPacket(new Packet
 		{
-			Type = SPJPacket.PacketType.Call,
-			Phase = SPJPacket.PacketPhase.Player,
+			Type = PacketType.Call,
+			Phase = PacketPhase.Player,
 			Name = "accepted",
 			Data = new Dictionary
 			{

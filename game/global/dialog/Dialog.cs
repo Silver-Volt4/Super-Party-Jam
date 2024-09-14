@@ -36,10 +36,10 @@ public partial class Dialog : Control
 		tw.Parallel().TweenProperty(dimming, "self_modulate:a", 1, 0.3);
 		tw.TweenProperty(dialog_content, "size:y", 650, 0.3);
 		tw.Parallel().TweenProperty(dialog_content, "position:y", (Size.Y - 650) / 2, 0.3);
-		tw.Parallel().TweenCallback(Callable.From(() => SPJ.Meta.PlaySfx("dialog")));
-		tw.TweenCallback(Callable.From(() => button_dismiss.Disabled = false));
-		tw.Parallel().TweenCallback(Callable.From(() => button_ok.Disabled = false));
-		tw.Parallel().TweenCallback(Callable.From(() => button_cancel.Disabled = false));
+		tw.Parallel().TweenCallback(Godot.Callable.From(() => SPJ.Meta.PlaySfx("dialog")));
+		tw.TweenCallback(Godot.Callable.From(() => button_dismiss.Disabled = false));
+		tw.Parallel().TweenCallback(Godot.Callable.From(() => button_ok.Disabled = false));
+		tw.Parallel().TweenCallback(Godot.Callable.From(() => button_cancel.Disabled = false));
 	}
 
 	public Dialog Title(string title_text)
@@ -78,7 +78,7 @@ public partial class Dialog : Control
 		var tw = CreateTween().SetEase(Tween.EaseType.InOut).SetTrans(Tween.TransitionType.Circ);
 		tw.TweenProperty(dialog_content, "size:y", dialog_header.Size.Y, 0.1);
 		tw.Parallel().TweenProperty(dialog_content, "position:y", (Size.Y - dialog_header.Size.Y) / 2, 0.2);
-		tw.Parallel().TweenCallback(Callable.From(() => dialog_header.Flash(false)));
+		tw.Parallel().TweenCallback(Godot.Callable.From(() => dialog_header.Flash(false)));
 		tw.TweenProperty(frosted_glass, "self_modulate:a", 0, 0.3);
 		tw.Parallel().TweenProperty(dimming, "self_modulate:a", 0, 0.3);
 		tw.Finished += QueueFree;

@@ -32,7 +32,7 @@ public partial class LobbyPlayer : Panel
 		UpdateButtons();
 		SpectatorChanged(Player.IsSpectator());
 		var tw = GetTree().CreateTween().SetEase(Tween.EaseType.Out).SetTrans(Tween.TransitionType.Circ);
-		tw.TweenMethod(Callable.From((float p) => (Material as ShaderMaterial)?.SetShaderParameter("progress", p)), 1.0, 0.115, 0.3);
+		tw.TweenMethod(Godot.Callable.From((float p) => (Material as ShaderMaterial)?.SetShaderParameter("progress", p)), 1.0, 0.115, 0.3);
 		tw.Parallel().TweenProperty(nameLabel, "position", nameLabel.Position, 0.5);
 		tw.Parallel().TweenProperty(nameLabel, "size", nameLabel.Size, 0.5);
 		(Material as ShaderMaterial)?.SetShaderParameter("progress", 0);
