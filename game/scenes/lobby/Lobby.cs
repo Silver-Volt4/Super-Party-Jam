@@ -13,7 +13,7 @@ public partial class Lobby : Control
 	public override void _Ready()
 	{
 		var games = DirAccess.GetDirectoriesAt("res://games/");
-		var buttonBase = GD.Load<PackedScene>("res://global/lobby/modulebutton.tscn").Instantiate<ModuleButton>();
+		var buttonBase = GD.Load<PackedScene>("res://scenes/lobby/ModuleButton.tscn").Instantiate<ModuleButton>();
 		foreach (var game in SPJ.GetMinigames())
 		{
 			var button = buttonBase.Duplicate() as ModuleButton;
@@ -60,7 +60,7 @@ public partial class Lobby : Control
 	public void AddPlayer(SPJPlayer player) => AddPlayer(player, false);
 	public void AddPlayer(SPJPlayer player, bool initial = false)
 	{
-		var lp = GD.Load<PackedScene>("res://global/lobby/lobbyplayer.tscn").Instantiate<LobbyPlayer>();
+		var lp = GD.Load<PackedScene>("res://scenes/lobby/LobbyPlayer.tscn").Instantiate<LobbyPlayer>();
 		lp.Player = player;
 		players.AddChild(lp);
 		if (!initial) lp.Flash();

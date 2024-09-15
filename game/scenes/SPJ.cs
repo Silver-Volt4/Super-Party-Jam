@@ -23,7 +23,7 @@ public static class SPJ
 	public static SPJModuleMetadata[] GetMinigames()
 	{
 		var games = DirAccess.GetDirectoriesAt("res://games/");
-		var buttonBase = GD.Load<PackedScene>("res://global/lobby/modulebutton.tscn").Instantiate<ModuleButton>();
+		var buttonBase = GD.Load<PackedScene>("res://scenes/lobby/ModuleButton.tscn").Instantiate<ModuleButton>();
 		SPJModuleMetadata[] modules = new SPJModuleMetadata[games.Length];
 		var index = 0;
 		foreach (var game in games)
@@ -102,5 +102,17 @@ public static class SPJ
 			}
 		}
 		return image;
+	}
+
+	public static void Shuffle<T>(T[] array)
+	{
+		int n = array.Length;
+		while (n > 1)
+		{
+			int k = (int)GD.Randi() % n--;
+			T temp = array[n];
+			array[n] = array[k];
+			array[k] = temp;
+		}
 	}
 }

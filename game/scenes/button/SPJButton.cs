@@ -1,5 +1,7 @@
 using Godot;
 
+namespace SuperPartyJam.Scenes;
+
 [GlobalClass]
 partial class SPJButton : Button
 {

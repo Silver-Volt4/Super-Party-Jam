@@ -3,7 +3,7 @@
 [ext_resource type="Theme" uid="uid://bm57ki0xvrcn0" path="res://assets/resources/Theme.tres" id="1_igug1"]
 [ext_resource type="Texture2D" uid="uid://cgkxwyjm7u47t" path="res://assets/textures/ogorkykonserwowe.png" id="1_lodq2"]
 [ext_resource type="Script" path="res://scenes/lobby/BeginScreen.cs" id="2_vyc10"]
-[ext_resource type="Script" path="res://assets/nodes/SPJButton.cs" id="4_2f30q"]
+[ext_resource type="Script" path="res://scenes/button/SPJButton.cs" id="4_2f30q"]
 
 [node name="BeginScreen" type="Control" node_paths=PackedStringArray("welcomeText", "modeSelect", "explanation")]
 layout_mode = 3

@@ -75,7 +75,7 @@ public partial class Dialog : Control
 		return this;
 	}
 
-	private async void FadeOut(bool resolve)
+	private void FadeOut(bool resolve)
 	{
 		var tw = CreateTween().SetEase(Tween.EaseType.InOut).SetTrans(Tween.TransitionType.Circ);
 		tw.TweenProperty(dialog_content, "size:y", dialog_header.Size.Y, 0.1);
@@ -85,12 +85,4 @@ public partial class Dialog : Control
 		tw.Parallel().TweenProperty(dimming, "self_modulate:a", 0, 0.3);
 		tw.Finished += QueueFree;
 	}
-
-	// 	var tw = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CIRC)
-	// tw.tween_property($Dialog, "size:y", $Dialog/Header.size.y, 0.1)
-	// tw.parallel().tween_property($Dialog, "position:y", (self.size.y - $Dialog/Header.size.y)/2, 0.2)
-	// $Dialog/Header.flash(false)
-	// tw.tween_property($FrostedGlass, "self_modulate:a", 0, 0.3)
-	// tw.parallel().tween_property($Dimming, "self_modulate:a", 0, 0.3)
-	// tw.finished.connect(self.queue_free)
 }

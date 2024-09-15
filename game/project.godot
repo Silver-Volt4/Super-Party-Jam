@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Sonic Party Jam"
-run/main_scene="res://scenes/lobby/mainmenu.tscn"
+run/main_scene="res://scenes/lobby/MainMenu.tscn"
 config/features=PackedStringArray("4.3", "C#", "Mobile")
 config/icon="res://icon.svg"
 
@@ -25,7 +25,6 @@ HttpServer="*res://server/SPJHttpServer.cs"
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
-window/size/mode=1
 window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"

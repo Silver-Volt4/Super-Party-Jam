@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://scenes/dialog/Dialog.cs" id="2_ah58h"]
 [ext_resource type="Shader" path="res://scenes/dialog/dialog.gdshader" id="2_v7rqx"]
 [ext_resource type="PackedScene" uid="uid://bsn4xv1aetcl5" path="res://scenes/header/SPJHeader.tscn" id="4_j2s1i"]
-[ext_resource type="Script" path="res://assets/nodes/SPJButton.cs" id="5_1um33"]
+[ext_resource type="Script" path="res://scenes/button/SPJButton.cs" id="5_1um33"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_tbg3r"]
 shader = ExtResource("2_v7rqx")

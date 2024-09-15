@@ -1,0 +1,61 @@
+[gd_scene load_steps=5 format=3 uid="uid://btbs8sp6mqjf5"]
+
+[ext_resource type="Script" path="res://scenes/transition/Transition.cs" id="1_ekkkq"]
+[ext_resource type="Theme" uid="uid://bm57ki0xvrcn0" path="res://assets/resources/Theme.tres" id="1_jjvnj"]
+[ext_resource type="Texture2D" uid="uid://dw62nxfhd5ucy" path="res://icon.svg" id="2_tnacy"]
+[ext_resource type="PackedScene" uid="uid://dskfb14x6ospx" path="res://scenes/header/SPJWhiteHeader.tscn" id="3_8x2tj"]
+
+[node name="Transition" type="Control" node_paths=PackedStringArray("header", "cover_image", "loading_text_label", "activity_name_label")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_jjvnj")
+script = ExtResource("1_ekkkq")
+header = NodePath("Header")
+cover_image = NodePath("CoverImage")
+loading_text_label = NodePath("LoadingText")
+activity_name_label = NodePath("Header/Label")
+
+[node name="CoverImage" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 336.0
+offset_top = 189.0
+offset_right = 336.0
+offset_bottom = 189.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1.35, 1.35)
+pivot_offset = Vector2(960, 540)
+texture = ExtResource("2_tnacy")
+
+[node name="Header" parent="." instance=ExtResource("3_8x2tj")]
+layout_mode = 1
+offset_top = 104.0
+offset_bottom = 230.0
+
+[node name="Label" parent="Header" index="1"]
+text = "activity name goes here"
+
+[node name="LoadingText" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1830.0
+offset_top = -123.0
+offset_right = -32.0
+offset_bottom = -32.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "..."
+horizontal_alignment = 2
+
+[editable path="Header"]

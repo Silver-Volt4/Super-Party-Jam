@@ -1,0 +1,73 @@
+[gd_scene load_steps=7 format=3 uid="uid://dskfb14x6ospx"]
+
+[ext_resource type="Script" path="res://scenes/header/SPJHeader.cs" id="1_p7a6h"]
+[ext_resource type="FontFile" uid="uid://bq4i1lh5yt1v5" path="res://assets/controller/font/anton/anton-v25-latin_latin-ext-regular.woff2" id="3_qu0b1"]
+[ext_resource type="Shader" path="res://scenes/header/flasher.gdshader" id="4_2pq61"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qsxjx"]
+content_margin_left = 40.0
+content_margin_right = 40.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_d40hs"]
+line_spacing = 0.0
+font_size = 100
+font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gjqt5"]
+shader = ExtResource("4_2pq61")
+shader_parameter/progress = 0.0
+shader_parameter/skew = 0.05
+
+[node name="Header" type="Control" node_paths=PackedStringArray("header", "label", "flasher")]
+custom_minimum_size = Vector2(0, 126)
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_p7a6h")
+header = NodePath("Header")
+label = NodePath("Label")
+flasher = NodePath("Flasher")
+
+[node name="Header" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="Header" type="ColorRect" parent="Header"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -12.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("3_qu0b1")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_qsxjx")
+text = "SETTINGS"
+label_settings = SubResource("LabelSettings_d40hs")
+horizontal_alignment = 1
+vertical_alignment = 1
+justification_flags = 160
+uppercase = true
+
+[node name="Flasher" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_gjqt5")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
