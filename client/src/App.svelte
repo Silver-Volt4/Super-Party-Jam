@@ -8,6 +8,8 @@
 	import loadModule from "./games/loader";
 	import type { SvelteComponent } from "svelte";
 
+	console.log(loadModule);
+
 	let disconnected = $derived(
 		client.isInitialized &&
 			client.connectionState === ConnectionState.OFFLINE,
@@ -37,8 +39,16 @@
 		}
 	});
 
-	async function switchModule(module: string) {
-		moduleAwaiter = loadModule(module);
+	function switchModule(module: string) {
+		moduleAwaiter = awaitModule(module);
+	}
+
+	async function awaitModule(module: string) {
+		console.log("awaiting module")
+		let m = await loadModule(module);
+		console.log("got module")
+		console.log(m)
+		return m;
 	}
 
 	function rename() {

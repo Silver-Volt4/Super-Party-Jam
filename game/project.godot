@@ -11,15 +11,15 @@ config_version=5
 [application]
 
 config/name="Sonic Party Jam"
-run/main_scene="res://global/lobby/mainmenu.tscn"
+run/main_scene="res://scenes/lobby/mainmenu.tscn"
 config/features=PackedStringArray("4.3", "C#", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
 
-SPJ="*res://global/SPJMeta.tscn"
-GameServer="*res://global/server/SPJGameServer.cs"
-HttpServer="*res://global/server/SPJHttpServer.cs"
+SPJ="*res://scenes/meta/SPJMeta.tscn"
+GameServer="*res://server/SPJGameServer.cs"
+HttpServer="*res://server/SPJHttpServer.cs"
 
 [display]
 

@@ -9,8 +9,9 @@ export default defineConfig({
   build: {
     outDir: "../game/assets/controller",
     emptyOutDir: true,
+    minify: true,
     rollupOptions: {
-      external: ["svelte"],
+      // external: ["svelte"],
       output: { // TODO: maybe use a function to make it smart
         entryFileNames: `[name].js`,
         chunkFileNames: (chunkInfo) => {

@@ -5,9 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "node ./build.js",
-		"build-controller": "vite build --base=./",
-		"build-games": "vite build -m build_games",
+		"build": "vite build --base=./",
 		"preview": "vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json && tsc -p tsconfig.node.json"
 	},

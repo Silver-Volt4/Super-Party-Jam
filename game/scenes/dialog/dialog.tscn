@@ -1,0 +1,147 @@
+[gd_scene load_steps=8 format=3 uid="uid://bb1qh7gqgwd0c"]
+
+[ext_resource type="Theme" uid="uid://bm57ki0xvrcn0" path="res://assets/resources/Theme.tres" id="1_p05p0"]
+[ext_resource type="Script" path="res://scenes/dialog/Dialog.cs" id="2_ah58h"]
+[ext_resource type="Shader" path="res://scenes/dialog/dialog.gdshader" id="2_v7rqx"]
+[ext_resource type="PackedScene" uid="uid://bsn4xv1aetcl5" path="res://scenes/header/SPJHeader.tscn" id="4_j2s1i"]
+[ext_resource type="Script" path="res://assets/nodes/SPJButton.cs" id="5_1um33"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tbg3r"]
+shader = ExtResource("2_v7rqx")
+shader_parameter/blur_amount = 3.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tv286"]
+bg_color = Color(0.152941, 0.152941, 0.152941, 0.803922)
+
+[node name="Dialog" type="Control" node_paths=PackedStringArray("button_ok", "button_cancel", "button_dismiss", "dialog_content", "dialog_header", "frosted_glass", "dimming", "dialog_text")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_p05p0")
+script = ExtResource("2_ah58h")
+button_ok = NodePath("Dialog/Panel/OK")
+button_cancel = NodePath("Dialog/Panel/Cancel")
+button_dismiss = NodePath("Dialog/Panel/Dismiss")
+dialog_content = NodePath("Dialog")
+dialog_header = NodePath("Dialog/Header")
+frosted_glass = NodePath("FrostedGlass")
+dimming = NodePath("Dimming")
+dialog_text = NodePath("Dialog/Panel/DialogText")
+
+[node name="Bbc" type="BackBufferCopy" parent="."]
+copy_mode = 2
+
+[node name="FrostedGlass" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_tbg3r")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dimming" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.509804)
+
+[node name="Dialog" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -325.0
+offset_bottom = 325.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="Header" parent="Dialog" instance=ExtResource("4_j2s1i")]
+layout_mode = 2
+
+[node name="Label" parent="Dialog/Header" index="1"]
+text = "Alert"
+
+[node name="Panel" type="Panel" parent="Dialog"]
+clip_contents = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_tv286")
+
+[node name="DialogText" type="Label" parent="Dialog/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -94.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "This is an alert!"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Dismiss" type="Button" parent="Dialog/Panel"]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -375.5
+offset_top = -115.0
+offset_right = 375.5
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+disabled = true
+text = "Dismiss"
+script = ExtResource("5_1um33")
+
+[node name="OK" type="Button" parent="Dialog/Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.4
+anchor_top = 0.883
+anchor_right = 0.4
+anchor_bottom = 0.883
+offset_left = -202.5
+offset_top = -53.692
+offset_right = 170.5
+offset_bottom = 53.308
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+disabled = true
+text = "OK"
+script = ExtResource("5_1um33")
+
+[node name="Cancel" type="Button" parent="Dialog/Panel" groups=["cancel"]]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.6
+anchor_top = 0.883
+anchor_right = 0.6
+anchor_bottom = 0.883
+offset_left = -171.0
+offset_top = -53.692
+offset_right = 203.0
+offset_bottom = 53.308
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+disabled = true
+text = "Cancel"
+script = ExtResource("5_1um33")
+
+[editable path="Dialog/Header"]
