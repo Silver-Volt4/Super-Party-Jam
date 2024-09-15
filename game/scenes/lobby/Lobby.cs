@@ -76,7 +76,7 @@ public partial class Lobby : Control
 				"Automatic detection of your IP address has failed.\nThe QR code which allows you to quickly join the game cannot be shown.\nPlease connect manually."
 			);
 		}
-		var port = SPJ.GameServer.GetPort();
+		var port = SPJ.HttpServer.GetPort();
 		qr_code.Texture = ImageTexture.CreateFromImage(SPJ.GetQRCode($"http://{self_ip}:{port}"));
 	}
 }

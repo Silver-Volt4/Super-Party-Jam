@@ -5,6 +5,8 @@ using SuperPartyJam;
 using SuperPartyJam.Server;
 using SuperPartyJam.Server.Utils;
 
+namespace SuperPartyJam.Game.Bingo;
+
 partial class BingoModule : SPJModule
 {
     public override string GetName() => "bingo";

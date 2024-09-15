@@ -45,7 +45,7 @@ public partial class SPJMeta : Node
 
 	public void Alert(string title, string text)
 	{
-		var dialog = GD.Load<PackedScene>("res://global/dialog/Dialog.tscn").Instantiate<Dialog>();
+		var dialog = GD.Load<PackedScene>("res://scenes/dialog/Dialog.tscn").Instantiate<Dialog>();
 		overlays.AddChild(dialog.Title(title).Text(text).Alert("OK"));
 	}
 

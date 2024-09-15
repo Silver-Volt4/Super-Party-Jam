@@ -31,14 +31,14 @@ public abstract partial class SPJModule : Resource, MPacketHandler
         return player.GetClient();
     }
 
+    public SPJPlayer GetPlayer()
+    {
+        return player;
+    }
+
     public PacketPhase GetPhase()
     {
         return PacketPhase.Module;
-    }
-
-    internal void ChangeModule(string v)
-    {
-        throw new NotImplementedException();
     }
 }
 

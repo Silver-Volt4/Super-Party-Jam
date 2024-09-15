@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/header/SPJHeader.cs" id="1_lcty2"]
 [ext_resource type="Shader" path="res://assets/resources/polkadot.gdshader" id="1_oyg3x"]
-[ext_resource type="FontFile" uid="uid://bq4i1lh5yt1v5" path="res://assets/controller/font/anton/anton-v25-latin_latin-ext-regular.woff2" id="2_mwt13"]
+[ext_resource type="FontFile" uid="uid://d0cpdimbf1ei1" path="res://assets/controller/font/anton/anton-v25-latin_latin-ext-regular.woff2" id="2_mwt13"]
 [ext_resource type="Shader" path="res://scenes/header/flasher.gdshader" id="4_r3me5"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6juad"]
